@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 load.ivy("org.apache.jackrabbit" % "oak-jcr" % oakVersion)
+load.ivy("org.apache.jackrabbit" % "oak-segment" % oakVersion)
 load.ivy("org.kamranzafar" % "jtar" % "2.3")
 @
 import java.io.{FileInputStream, BufferedInputStream}

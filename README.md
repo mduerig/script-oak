@@ -3,7 +3,7 @@ Scripts for working with [Jackrabbit Oak](http://jackrabbit.apache.org/oak/) in 
 
 After starting Ammonite set the Oak version:
 
-    val oakVersion = "1.3.14"
+    val oakVersion = "1.3.15"
     
 and load some Oak specific predefs:
 
