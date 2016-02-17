@@ -14,8 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-load.exec("Oak.scala")
-@
 import java.util.{UUID, HashSet}
 import org.apache.jackrabbit.oak.plugins.segment.SegmentGraph.SegmentGraphVisitor
 import org.apache.jackrabbit.oak.plugins.segment.SegmentId

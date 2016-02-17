@@ -14,16 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-load.exec("Oak.scala")
-@
 import java.io.File
 import ammonite.ops._
+import michid.script.oak.Tar
 import scala.io.Source
 
 /** Statistics of tar file content */
 
 /* List tar files */
 def tars(path: Path) = (ls ! path) |? (_.ext == "tar")
+
+/** List bak files */
+def baks(path: Path) = (ls ! path) |? (_.ext == "bak")
+
+/** List content of tar file */
+def tarls(path: Path) = Tar(path)
 
 /** Distribution of sizes wrt. to count bins */
 def sizeDist(sizes: Iterable[Int], count: Int): Seq[(Int, Int)] = {

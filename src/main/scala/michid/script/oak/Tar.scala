@@ -14,21 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-load.ivy("org.apache.jackrabbit" % "oak-jcr" % oakVersion)
-load.ivy("org.apache.jackrabbit" % "oak-segment" % oakVersion)
-load.ivy("org.kamranzafar" % "jtar" % "2.3")
-@
+package michid.script.oak
+
 import java.io.{FileInputStream, BufferedInputStream}
 import java.util.Date
+
 import ammonite.ops._
-import org.apache.jackrabbit.oak.plugins.segment.file.FileStore.ReadOnlyStore
 import org.kamranzafar.jtar.TarInputStream
-
-/** Common predefs used by script-oak */
-
-
-/** open read only store at path */
-def readonlyStore(path: Path) = new ReadOnlyStore(path.nio.toFile)
 
 case class TarEntry(size: Long, date: Date, name: String)
 
@@ -49,5 +41,7 @@ class Tar(path: Path) extends Iterator[TarEntry] with java.io.Closeable {
   override def close(): Unit = tar.close()
 }
 
-/** List content of tar file */
-def tarls(path: Path) = new Tar(path)
+object Tar {
+  def apply(path: Path): Tar = new Tar(path)
+  def apply(path: String): Tar = Tar(Path(path))
+}
