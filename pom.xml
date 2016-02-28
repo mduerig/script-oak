@@ -100,5 +100,10 @@
       <artifactId>jtar</artifactId>
       <version>2.3</version>
     </dependency>
+    <dependency>
+      <groupId>com.quantifind</groupId>
+      <artifactId>wisp_2.11</artifactId>
+      <version>0.0.4</version>
+    </dependency>
   </dependencies>
 </project>
