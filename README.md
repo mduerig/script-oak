@@ -3,7 +3,7 @@ Support and scripts for working with [Jackrabbit Oak](http://jackrabbit.apache.o
 
 After starting Ammonite load this library:
 
-    load.ivy("michid" % "script-oak" % "1.1")
+    load.ivy("michid" % "script-oak" % "1.2-SNAPSHOT")
 
 Now import some pre-defs:
 
