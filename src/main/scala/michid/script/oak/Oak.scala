@@ -26,7 +26,7 @@ import scala.io.Source
 
 object Oak {
   /** open read only store at path */
-  def readonlyStore(path: Path) = new ReadOnlyStore(path.nio.toFile)
+  def readonlyStore(path: Path) = new ReadOnlyStore(path.toNIO.toFile)
 
   /** read a script from /scripts */
   def script(name: String) = {
