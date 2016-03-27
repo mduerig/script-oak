@@ -20,8 +20,6 @@ package michid.script.oak
 import ammonite.ops._
 import org.apache.jackrabbit.oak.plugins.segment.file.FileStore.ReadOnlyStore
 
-import scala.io.Source
-
 /** Common predefs used by script-oak */
 
 object Oak {
@@ -29,10 +27,6 @@ object Oak {
   def readonlyStore(path: Path) = new ReadOnlyStore(path.toNIO.toFile)
 
   /** read a script from /scripts */
-  def script(name: String) = {
-    val url = getClass.getResource("/scripts/" + name)
-    if (url == null) null
-    else Source.fromURL(url).getLines().mkString("\n")
-  }
+  def script(name: String) = read! resource/'scripts/name
 }
 

@@ -31,7 +31,7 @@
 
   <properties>
     <oak.version>1.6-SNAPSHOT</oak.version>
-    <amm.version>0.5.6</amm.version>
+    <amm.version>0.5.7</amm.version>
     <scala-version>2.11.7</scala-version>
   </properties>
 
