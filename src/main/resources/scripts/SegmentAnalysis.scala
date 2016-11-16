@@ -14,21 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import java.util.{UUID, HashSet}
-import org.apache.jackrabbit.oak.plugins.segment.SegmentGraph.SegmentGraphVisitor
-import org.apache.jackrabbit.oak.plugins.segment.SegmentId
-import org.apache.jackrabbit.oak.plugins.segment.file.FileStore.ReadOnlyStore
+import java.util.{HashSet, UUID}
+
+import org.apache.jackrabbit.oak.segment.SegmentGraph.SegmentGraphVisitor
+import org.apache.jackrabbit.oak.segment.SegmentId
+import org.apache.jackrabbit.oak.segment.file.ReadOnlyFileStore
 
 /** File store statistics */
 
 /** list segment ids, infos and sizes */
-def segments(store: ReadOnlyStore): List[SegmentInfo] = {
+def segments(store: ReadOnlyFileStore): List[SegmentInfo] = {
   var infos: List[SegmentInfo] = Nil
 
   store.traverseSegmentGraph(new HashSet(), new SegmentGraphVisitor {
     // store.getTracker.getSegmentId()
     override def accept(from: UUID, to: UUID): Unit = {
-      val id = store.getTracker.getSegmentId(from.getMostSignificantBits, from.getLeastSignificantBits)
+      val id = store.newSegmentId(from.getMostSignificantBits, from.getLeastSignificantBits)
       infos = SegmentInfo(id)::infos
     }
   })

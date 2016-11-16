@@ -17,17 +17,18 @@
 package michid.script.oak
 
 import ammonite.ops.Path
-import org.apache.jackrabbit.oak.plugins.segment.file.{FileStore, JournalReader}
-import org.apache.jackrabbit.oak.plugins.segment.{RecordId, SegmentNodeState}
+import org.apache.jackrabbit.oak.segment.file.{AbstractFileStore, JournalReader}
+import org.apache.jackrabbit.oak.segment.{RecordId, SegmentNodeState}
 import scala.collection.JavaConversions._
 
 /**
   * Revisions from a journal file
   */
 object Revisions {
-  def apply(journal: Path): Iterable[String] =
-    new JournalReader(journal.toNIO.toFile)
+  def apply(journal: Path): Iterable[String] = new Iterable[String] {
+    override def iterator: Iterator[String] = new JournalReader(journal.toNIO.toFile)
+  }
 
-  def nodes(recordIds: Iterable[String], store: FileStore): Iterable[SegmentNodeState] =
-    recordIds.map(rev => new SegmentNodeState(RecordId.fromString(store.getTracker, rev)))
+  def nodes(recordIds: Iterable[String], store: AbstractFileStore): Iterable[SegmentNodeState] =
+    recordIds.map(rev => store.getReader.readNode(RecordId.fromString(store, rev)))
 }

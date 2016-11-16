@@ -17,22 +17,25 @@
 import ammonite.ops.Path
 import michid.script.oak.{PropertyChanged, PropertyRemoved, _}
 import org.apache.jackrabbit.oak.api.PropertyState
-import org.apache.jackrabbit.oak.plugins.segment.SegmentNodeState
-import org.apache.jackrabbit.oak.plugins.segment.file.FileStore
+import org.apache.jackrabbit.oak.segment.SegmentNodeState
+import org.apache.jackrabbit.oak.segment.file.AbstractFileStore
 import org.apache.jackrabbit.oak.spi.state.NodeState
 
 /**
   * Analyse changes to a file store across a range of revisions
   */
-class ChangeAnalysis(store: FileStore, revs: Iterable[String], projection: NodeState => NodeState) {
+class ChangeAnalysis(store: AbstractFileStore, revs: Iterable[String], projection: NodeState => NodeState) {
 
-  def this(store: FileStore, journal: Path, fromRev: String, toRev: String,
+  def this(store: AbstractFileStore,
+           journal: Path,
+           fromRev: String = null,
+           toRev: String = null,
            projection: NodeState => NodeState = Projections.root) {
     this(
       store,
       Revisions(journal)
-              .dropWhile(_ != fromRev)
-              .takeWhile(_ != toRev),
+              .dropWhile(fromRev != null && _ != fromRev)
+              .takeWhile(toRev == null || _ != toRev),
       projection)
   }
 

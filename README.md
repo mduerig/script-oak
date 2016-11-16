@@ -8,7 +8,6 @@ After starting Ammonite load this library:
 Now import some pre-defs:
 
     import michid.script.oak._
-    import michid.script.oak.Oak._
 
 To create a new repository and open a session try this:
 
