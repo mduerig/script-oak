@@ -15,8 +15,10 @@
  * limitations under the License.
  */
 import java.io.File
+
 import ammonite.ops._
-import michid.script.oak.Tar
+import michid.script.oak.filestore.Tar
+
 import scala.io.Source
 
 /** Statistics of tar file content */

@@ -14,8 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package michid.script.oak
+package michid.script.oak.nodestore
 
+import michid.script.oak.nodestore.PropertyStates._
 import org.apache.jackrabbit.oak.api.PropertyState
 import org.apache.jackrabbit.oak.plugins.memory.EmptyNodeState.EMPTY_NODE
 import org.apache.jackrabbit.oak.spi.state.{NodeState, NodeStateDiff}
@@ -80,6 +81,47 @@ object Changes {
       val statesList = states.toList
       apply(statesList.head, statesList(1), path)
     }).toStream
+  }
+
+  case class TurnOver(
+         addedProperties: Long,
+         removedProperties: Long,
+         changedProperties: Long,
+         addedNodes: Long,
+         removedNodes: Long,
+         changedNodes: Long,
+         addedContent: Long,
+         removedContent: Long) {
+    def this() { this(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L)}
+  }
+
+  def turnOver(changes: Stream[Change]): TurnOver = {
+    // revision log is processed in reverse chronological order,
+    // so each addition appears as deletion and vice versa
+    changes.foldLeft(new TurnOver())({
+      case (turnOver, PropertyAdded(_, after)) =>
+        turnOver.copy(
+          removedProperties = turnOver.removedProperties + 1,
+          removedContent = turnOver.removedContent + size(after))
+      case (turnOver, PropertyRemoved(_, before)) =>
+        turnOver.copy(
+          addedProperties = turnOver.addedProperties + 1,
+          addedContent = turnOver.addedContent + size(before))
+      case (turnOver, PropertyChanged(_, before, after)) =>
+        turnOver.copy(
+          changedProperties = turnOver.changedProperties + 1,
+          addedContent = turnOver.addedContent + size(before),
+          removedContent = turnOver.removedContent + size(after))
+      case (turnOver, NodeAdded(_,_)) =>
+        turnOver.copy(
+          removedNodes = turnOver.removedNodes + 1)
+      case (turnOver, NodeRemoved(_,_)) =>
+        turnOver.copy(
+          addedNodes = turnOver.addedNodes + 1)
+      case (turnOver, NodeChanged(_,_,_)) =>
+        turnOver.copy(
+          changedNodes = turnOver.changedNodes + 1)
+    })
   }
 
 }

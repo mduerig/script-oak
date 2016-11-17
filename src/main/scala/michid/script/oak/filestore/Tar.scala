@@ -14,9 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package michid.script.oak
+package michid.script.oak.filestore
 
-import java.io.{FileInputStream, BufferedInputStream}
+import java.io.{BufferedInputStream, FileInputStream}
 import java.util.Date
 
 import ammonite.ops._
@@ -24,7 +24,7 @@ import org.kamranzafar.jtar.TarInputStream
 
 case class TarEntry(size: Long, date: Date, name: String)
 
-class Tar(path: Path) extends Iterator[TarEntry] with java.io.Closeable {
+class Tar(val path: Path) extends Iterator[TarEntry] with java.io.Closeable {
   val tar = new TarInputStream(new BufferedInputStream(new FileInputStream(path.toString())))
 
   var e = tar.getNextEntry
