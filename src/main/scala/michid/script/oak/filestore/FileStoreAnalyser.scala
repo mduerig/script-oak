@@ -1,8 +1,8 @@
 package michid.script.oak.filestore
 
 import ammonite.ops.{Path, ls}
-import michid.script.oak.nodestore.{Change, Changes, Projection}
 import michid.script.oak.nodestore.Projection.root
+import michid.script.oak.nodestore.{Change, Changes, Projection}
 import org.apache.jackrabbit.oak.segment.file.FileStoreBuilder.fileStoreBuilder
 import org.apache.jackrabbit.oak.segment.file.{AbstractFileStore, FileStore, ReadOnlyFileStore}
 import org.apache.jackrabbit.oak.spi.blob.BlobStore
@@ -32,7 +32,7 @@ class FileStoreAnalyser(
     new Journal(this)
 
   def changes(projection: Projection = root): Stream[Stream[Change]] =
-    Changes(journal.nodes.flatten map projection, projection.path)
+    Changes(journal.nodes map projection, projection.path)
 
   /* TODO implement segments */
   def segments = ???

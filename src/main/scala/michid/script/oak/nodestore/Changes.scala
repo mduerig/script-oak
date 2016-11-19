@@ -96,28 +96,26 @@ object Changes {
   }
 
   def turnOver(changes: Stream[Change]): TurnOver = {
-    // revision log is processed in reverse chronological order,
-    // so each addition appears as deletion and vice versa
     changes.foldLeft(new TurnOver())({
       case (turnOver, PropertyAdded(_, after)) =>
         turnOver.copy(
-          removedProperties = turnOver.removedProperties + 1,
-          removedContent = turnOver.removedContent + size(after))
+          addedProperties = turnOver.addedProperties + 1,
+          addedContent = turnOver.addedContent + size(after))
       case (turnOver, PropertyRemoved(_, before)) =>
         turnOver.copy(
-          addedProperties = turnOver.addedProperties + 1,
-          addedContent = turnOver.addedContent + size(before))
+          removedProperties = turnOver.removedProperties + 1,
+          removedContent = turnOver.removedContent + size(before))
       case (turnOver, PropertyChanged(_, before, after)) =>
         turnOver.copy(
           changedProperties = turnOver.changedProperties + 1,
-          addedContent = turnOver.addedContent + size(before),
-          removedContent = turnOver.removedContent + size(after))
+          addedContent = turnOver.addedContent + size(after),
+          removedContent = turnOver.removedContent + size(before))
       case (turnOver, NodeAdded(_,_)) =>
         turnOver.copy(
-          removedNodes = turnOver.removedNodes + 1)
+          addedNodes = turnOver.addedNodes + 1)
       case (turnOver, NodeRemoved(_,_)) =>
         turnOver.copy(
-          addedNodes = turnOver.addedNodes + 1)
+          removedNodes = turnOver.removedNodes + 1)
       case (turnOver, NodeChanged(_,_,_)) =>
         turnOver.copy(
           changedNodes = turnOver.changedNodes + 1)
