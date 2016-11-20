@@ -1,5 +1,7 @@
 package michid.script.oak.filestore
 
+import java.util.Date
+
 import ammonite.ops.{Path, ls}
 import michid.script.oak.nodestore.Projection.root
 import michid.script.oak.nodestore.{Change, Changes, Projection}
@@ -31,8 +33,8 @@ class FileStoreAnalyser(
   val journal: Journal =
     new Journal(this)
 
-  def changes(projection: Projection = root): Stream[Stream[Change]] =
-    Changes(journal.nodes map projection, projection.path)
+  def changes(projection: Projection = root): Stream[(Stream[Change], Date)] =
+    Changes(journal.nodes map projection, projection.path) zip (journal.entries map (_._2))
 
   /* TODO implement segments */
   def segments = ???
