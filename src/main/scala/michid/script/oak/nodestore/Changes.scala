@@ -16,7 +16,7 @@
  */
 package michid.script.oak.nodestore
 
-import michid.script.oak.nodestore.PropertyStates._
+import michid.script.oak.nodestore.PropertyStates
 import org.apache.jackrabbit.oak.api.PropertyState
 import org.apache.jackrabbit.oak.plugins.memory.EmptyNodeState.EMPTY_NODE
 import org.apache.jackrabbit.oak.spi.state.{NodeState, NodeStateDiff}
@@ -95,7 +95,8 @@ object Changes {
     def this() { this(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L)}
   }
 
-  def turnOver(changes: Stream[Change]): TurnOver = {
+  def turnOver(changes: Stream[Change], size: PropertyState => Long = PropertyStates.size)
+  : TurnOver = {
     changes.foldLeft(new TurnOver())({
       case (turnOver, PropertyAdded(_, after)) =>
         turnOver.copy(
