@@ -7,18 +7,19 @@ import org.apache.jackrabbit.oak.segment.file.AbstractFileStore
 import org.apache.jackrabbit.oak.segment.{RecordId, SegmentNodeState, SegmentReader}
 
 import scala.io.Source
+import scala.util.matching.Regex
 
 /**
   * Revision from a journal file
   */
-class Journal(val storeAnalyser: FileStoreAnalyser) {
-  val entries: Iterable[(String, Date)] = Journal.entries(storeAnalyser.directory/"journal.log")
-  val ids: Iterable[RecordId] = Journal.ids(entries map (_._1), storeAnalyser.store)
-  val nodes: Iterable[SegmentNodeState] = Journal.nodes(ids, storeAnalyser.store.getReader)
+case class Journal(
+    entries: Iterable[(String, Date)],
+    ids: Iterable[RecordId],
+    roots: Iterable[SegmentNodeState]) {
 }
 
 object Journal {
-  val revision = """([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}:\d+) root (\d+)""".r
+  val revision: Regex = """([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}:\d+) root (\d+)""".r
 
   def entries(journal: Path): Iterable[(String, Date)] = new Iterable[(String, Date)] {
     override def iterator: Iterator[(String, Date)] =

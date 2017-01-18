@@ -30,11 +30,15 @@ class FileStoreAnalyser(
   val readWriteStore: Option[FileStore] =
     eitherStore.fold(rw => Some(rw), ro => None)
 
-  val journal: Journal =
-    new Journal(this)
+  val journal: Journal = {
+    val entries = Journal.entries(directory/"journal.log")
+    val ids = Journal.ids(entries map (_._1), store)
+    val roots = Journal.nodes(ids, store.getReader)
+    new Journal(entries, ids, roots)
+  }
 
   def changes(projection: Projection = root): Stream[(Stream[Change], Date)] =
-    Changes(journal.nodes map projection, projection.path) zip (journal.entries map (_._2))
+    Changes(journal.roots map projection, projection.path) zip (journal.entries map (_._2))
 
   /* TODO implement segments */
   def segments = ???
