@@ -82,6 +82,30 @@ object Changes {
     }).toStream
   }
 
+  /** Convenience for creating a filter for certain types of changes */
+  def eventFilter(
+      nodeAdded: Boolean = false,
+      nodeRemoved: Boolean = false,
+      nodeChanged: Boolean = false,
+      propertyAdded: Boolean = false,
+      propertyRemoved: Boolean = false,
+      propertyChanged: Boolean = false)
+  : Change => Boolean = {
+    case NodeAdded(_,_) if nodeAdded => true
+    case NodeRemoved(_,_) if nodeRemoved => true
+    case NodeChanged(_,_,_) if nodeChanged => true
+    case PropertyAdded(_,_) if propertyAdded => true
+    case PropertyRemoved(_,_) if propertyRemoved => true
+    case PropertyChanged(_,_,_) if propertyChanged => true
+    case _ => false
+  }
+
+  /** Convenience for creating a filter changes on specific paths */
+  def pathFilter(pathPredicate: String => Boolean): Change => Boolean = {
+    case Change(path) => pathPredicate(path)
+    case _ => false
+  }
+
   case class TurnOver(
          addedProperties: Long,
          removedProperties: Long,
