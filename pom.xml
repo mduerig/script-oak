@@ -32,7 +32,7 @@
   <properties>
     <oak.version>1.6-SNAPSHOT</oak.version>
     <amm.version>0.8.1</amm.version>
-    <scala-version>2.11.8</scala-version>
+    <scala-version>2.12.1</scala-version>
   </properties>
 
   <build>
