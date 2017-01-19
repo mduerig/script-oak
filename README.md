@@ -58,6 +58,6 @@ Analysing the items in a file store:
     // Number of nodes with a given number of properties in decreasing order
     val noOfProps = byPropertyCount.mapValues(_.size).toList.sortBy(-_._2)
     
-    // Number of bytes per value type 
+    // Number values per value type 
     val values = collectValues(root(fs.getNode("root")))
     values.groupBy(_.tyqe).mapValues(_.size)
