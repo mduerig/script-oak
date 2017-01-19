@@ -61,3 +61,6 @@ Analysing the items in a file store:
     // Number values per value type 
     val values = collectValues(root(fs.getNode("root")))
     values.groupBy(_.tyqe).mapValues(_.size)
+    
+    // Number of bytes per value type
+    values.groupBy(_.tyqe).mapValues(_.map(v => v.parent.state.size(v.index)).sum)
