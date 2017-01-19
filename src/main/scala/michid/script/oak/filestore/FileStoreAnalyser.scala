@@ -5,9 +5,13 @@ import java.util.Date
 import ammonite.ops.{Path, ls}
 import michid.script.oak.nodestore.Projection.root
 import michid.script.oak.nodestore.{Change, Changes, Projection}
+import org.apache.jackrabbit.oak.commons.PathUtils
 import org.apache.jackrabbit.oak.segment.file.FileStoreBuilder.fileStoreBuilder
 import org.apache.jackrabbit.oak.segment.file.{AbstractFileStore, FileStore, ReadOnlyFileStore}
 import org.apache.jackrabbit.oak.spi.blob.BlobStore
+import org.apache.jackrabbit.oak.spi.state.NodeState
+
+import scala.collection.JavaConverters._
 
 class FileStoreAnalyser(
        val directory: Path,
@@ -29,6 +33,15 @@ class FileStoreAnalyser(
 
   val readWriteStore: Option[FileStore] =
     eitherStore.fold(rw => Some(rw), ro => None)
+
+  def getNode(path: String = "/"): NodeState = {
+    def getNode(node: NodeState, path: List[String]): NodeState = path match {
+      case Nil => node
+      case name::p => getNode(node.getChildNode(name), p)
+    }
+
+    getNode(store.getHead, PathUtils.elements(path).asScala.toList)
+  }
 
   val journal: Journal = {
     val entries = Journal.entries(directory/"journal.log")
