@@ -2,6 +2,7 @@ package michid.script.oak.nodestore
 
 import java.util.Date
 
+import michid.script.oak.nodestore.Changes._
 import michid.script.oak.nodestore.LifeLine.{allNodes, allProperties, mapToSize}
 import michid.script.oak.nodestore.PropertyStates.size
 import org.apache.jackrabbit.oak.api.{PropertyState, Type}

@@ -22,22 +22,20 @@ import org.apache.jackrabbit.oak.spi.state.{NodeState, NodeStateDiff}
 
 import scala.collection.mutable.ListBuffer
 
-sealed abstract class Change(val path: String)
-case class NodeAdded(override val path: String, after: NodeState) extends Change(path)
-case class NodeRemoved(override val path: String, before: NodeState) extends Change(path)
-case class NodeChanged(override val path: String, before: NodeState, after: NodeState) extends Change(path)
-case class PropertyAdded(override val path: String, after: PropertyState) extends Change(path)
-case class PropertyRemoved(override val path: String, before: PropertyState) extends Change(path)
-case class PropertyChanged(override val path: String, before: PropertyState, after: PropertyState) extends Change(path)
-
-object Change {
-  def unapply(change: Change): Option[String] = Some(change.path)
-}
-
-/**
-  * Catamorphism over content diff
-  */
 object Changes {
+  sealed abstract class Change(val path: String)
+  case class NodeAdded(override val path: String, after: NodeState) extends Change(path)
+  case class NodeRemoved(override val path: String, before: NodeState) extends Change(path)
+  case class NodeChanged(override val path: String, before: NodeState, after: NodeState) extends Change(path)
+  case class PropertyAdded(override val path: String, after: PropertyState) extends Change(path)
+  case class PropertyRemoved(override val path: String, before: PropertyState) extends Change(path)
+  case class PropertyChanged(override val path: String, before: PropertyState, after: PropertyState) extends Change(path)
+
+  object Change {
+    def unapply(change: Change): Option[String] = Some(change.path)
+  }
+
+  /** Catamorphism over content diff */
   def apply(before: NodeState, after: NodeState, path: String = ""): Stream[Change] = {
     var changes = new ListBuffer[Stream[Change]]
 
@@ -83,7 +81,7 @@ object Changes {
   }
 
   /** Convenience for creating a filter for certain types of changes */
-  def eventFilter(
+  def changeFilter(
       nodeAdded: Boolean = false,
       nodeRemoved: Boolean = false,
       nodeChanged: Boolean = false,
@@ -118,7 +116,9 @@ object Changes {
     def this() { this(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L)}
   }
 
-  def turnOver(changes: Stream[Change], size: PropertyState => Long = PropertyStates.size)
+  def turnOver(
+      changes: Stream[Change],
+      size: PropertyState => Long = PropertyStates.size)
   : TurnOver = {
     changes.foldLeft(new TurnOver())({
       case (turnOver, PropertyAdded(_, after)) =>
