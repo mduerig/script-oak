@@ -32,6 +32,19 @@ object Items {
     def values: Stream[Value] =
       properties.flatMap(_.values)
 
+    /**
+      * Recursively apply f to all children of this node and combine the
+      * results through r.
+      *
+      * Examples:
+      * <pre>
+      *   val nodesSubtree = root.mapReduce[Int](_.nodes.size, _ + _)
+      *   val collectNodes = root.mapReduce(Stream(_), (m: Stream[Node], n: Stream[Node]) => m #::: n)
+      * </pre>
+      */
+    def mapReduce[A](f: Node => A, r: (A, A)  => A): A =
+      nodes.map(_.mapReduce(f, r)).fold(f(this))(r)
+
     override def toString: String =
       path + " @ " + state
   }
