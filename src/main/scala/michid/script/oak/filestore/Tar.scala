@@ -28,7 +28,7 @@ case class TarEntry(size: Long, date: Date, name: String)
 class Tar(val path: Path) extends Iterator[TarEntry] with java.io.Closeable {
   val tar = new TarInputStream(new BufferedInputStream(new FileInputStream(path.toString())))
 
-  var e = tar.getNextEntry
+  private var e = tar.getNextEntry
   override def hasNext: Boolean = e != null
   override def next(): TarEntry = {
     val n = e
@@ -38,6 +38,8 @@ class Tar(val path: Path) extends Iterator[TarEntry] with java.io.Closeable {
     }
     TarEntry(n.getSize, n.getModTime, n.getName)
   }
+
+  override def toString = s"Tar(${path.name})"
 
   override def close(): Unit = tar.close()
 }
