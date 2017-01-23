@@ -19,7 +19,8 @@ package michid.script.oak.filestore
 import java.io.{BufferedInputStream, FileInputStream}
 import java.util.Date
 
-import ammonite.ops._
+import ammonite.ops.Path
+
 import org.kamranzafar.jtar.TarInputStream
 
 case class TarEntry(size: Long, date: Date, name: String)

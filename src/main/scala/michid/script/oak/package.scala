@@ -1,6 +1,6 @@
 package michid.script
 
-import ammonite.ops._
+import ammonite.ops.{Path, read, resource}
 import michid.script.oak.filestore.FileStoreAnalyser
 import org.apache.jackrabbit.oak.plugins.blob.datastore.{DataStoreBlobStore, OakFileDataStore}
 import org.apache.jackrabbit.oak.segment.file.tooling.BasicReadOnlyBlobStore
@@ -28,5 +28,5 @@ package object oak {
     new FileStoreAnalyser(directory, blobStore, readOnly)
 
   /** read a script from /scripts */
-  def script(name: String) = read! resource/'scripts/name
+  def script(name: String): String = read! resource/'scripts/name
 }

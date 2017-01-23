@@ -6,13 +6,10 @@ import ammonite.ops.{Path, ls}
 import michid.script.oak.nodestore.Changes.Change
 import michid.script.oak.nodestore.Projection.root
 import michid.script.oak.nodestore.{Changes, Projection}
-import org.apache.jackrabbit.oak.commons.PathUtils
 import org.apache.jackrabbit.oak.segment.file.FileStoreBuilder.fileStoreBuilder
 import org.apache.jackrabbit.oak.segment.file.{AbstractFileStore, FileStore, ReadOnlyFileStore}
 import org.apache.jackrabbit.oak.spi.blob.BlobStore
 import org.apache.jackrabbit.oak.spi.state.NodeState
-
-import scala.collection.JavaConverters._
 
 class FileStoreAnalyser(
        val directory: Path,
