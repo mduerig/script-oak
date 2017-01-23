@@ -1,6 +1,7 @@
 package michid.script.oak.nodestore
 
 import org.apache.jackrabbit.oak.api.{PropertyState, Type}
+import org.apache.jackrabbit.oak.plugins.memory.EmptyNodeState.EMPTY_NODE
 import org.apache.jackrabbit.oak.spi.state.NodeState
 
 import scala.collection.JavaConverters._
@@ -15,9 +16,12 @@ object Items {
     def path: String = Items.path(this)
   }
 
+  /** Empty node having no parent. Used as parent for root nodes */
+  val EMPTY: Node = Node(null, "", EMPTY_NODE)
+
   /** NodeState wrapper providing access to the nodes name and parent */
   case class Node(parent: Node, override val name: String, state: NodeState) extends Item {
-    def this(root: NodeState) = this(null, "", root)
+    def this(root: NodeState) = this(EMPTY, "", root)
 
     /** Direct child nodes of this node */
     def nodes: Stream[Node] =
@@ -91,7 +95,7 @@ object Items {
 
   /** String representation of the path of an item */
   def path(item: Item): String = item match {
-    case n@Node(null, _, _) => n.name
+    case EMPTY => EMPTY.name
     case n@Node(parent, _, _) => path(parent) + "/" + n.name
     case p@Property(parent, _) => path(parent) + "/" + p.name
     case v@Value(parent, _, _, _) => path(parent) + v.name

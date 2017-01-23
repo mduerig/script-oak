@@ -2,9 +2,12 @@ package michid.script
 
 import ammonite.ops.{Path, read, resource, pwd}
 import michid.script.oak.filestore.FileStoreAnalyser
+import michid.script.oak.nodestore.Items.{EMPTY, Node, Property}
+import org.apache.jackrabbit.oak.api.PropertyState
 import org.apache.jackrabbit.oak.plugins.blob.datastore.{DataStoreBlobStore, OakFileDataStore}
 import org.apache.jackrabbit.oak.segment.file.tooling.BasicReadOnlyBlobStore
 import org.apache.jackrabbit.oak.spi.blob.BlobStore
+import org.apache.jackrabbit.oak.spi.state.NodeState
 
 /** Common predefs used by script-oak */
 package object oak {
@@ -35,4 +38,13 @@ package object oak {
 
   /** read a script from /scripts */
   def script(name: String): String = read! resource/'scripts/name
+
+  implicit class NodeAnalyser(node: NodeState) {
+    def analyse = new Node(node)
+  }
+
+  implicit class PropertyAnalyser(property: PropertyState) {
+    def analyse = Property(EMPTY, property)
+  }
+
 }
