@@ -2,10 +2,12 @@ package michid.script.oak.filestore
 
 import java.util.Date
 
+import scala.collection.JavaConverters._
 import ammonite.ops.{Path, ls}
 import michid.script.oak.nodestore.Changes.Change
 import michid.script.oak.nodestore.Projection.root
 import michid.script.oak.nodestore.{Changes, Projection}
+import org.apache.jackrabbit.oak.segment.Segment
 import org.apache.jackrabbit.oak.segment.file.FileStoreBuilder.fileStoreBuilder
 import org.apache.jackrabbit.oak.segment.file.{AbstractFileStore, FileStore, ReadOnlyFileStore}
 import org.apache.jackrabbit.oak.spi.blob.BlobStore
@@ -45,8 +47,9 @@ class FileStoreAnalyser(
   def changes(projection: Projection = root): Stream[(Stream[Change], Date)] =
     Changes(journal.roots map projection, projection.path) zip (journal.entries map (_._2))
 
-  /* TODO implement segments */
-  def segments = ???
+  def segments: Iterable[Segment] = readOnlyStore.map {
+      _.getSegmentIds.asScala.map(_.getSegment)
+    }.getOrElse(sys.error("Cannot iterate segment on a r/w store"))
 
   val tars: Iterable[Tar] =
     (ls ! directory) |? (_.ext == "tar") | (Tar(_))

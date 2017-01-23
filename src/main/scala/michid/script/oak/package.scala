@@ -1,10 +1,11 @@
 package michid.script
 
-import ammonite.ops.{Path, read, resource, pwd}
-import michid.script.oak.filestore.FileStoreAnalyser
+import ammonite.ops.{Path, pwd, read, resource}
+import michid.script.oak.filestore.{FileStoreAnalyser, SegmentAnalyser}
 import michid.script.oak.nodestore.Items.{EMPTY, Node, Property}
 import org.apache.jackrabbit.oak.api.PropertyState
 import org.apache.jackrabbit.oak.plugins.blob.datastore.{DataStoreBlobStore, OakFileDataStore}
+import org.apache.jackrabbit.oak.segment.Segment
 import org.apache.jackrabbit.oak.segment.file.tooling.BasicReadOnlyBlobStore
 import org.apache.jackrabbit.oak.spi.blob.BlobStore
 import org.apache.jackrabbit.oak.spi.state.NodeState
@@ -39,12 +40,16 @@ package object oak {
   /** read a script from /scripts */
   def script(name: String): String = read! resource/'scripts/name
 
-  implicit class NodeAnalyser(node: NodeState) {
+  implicit class AsNode(node: NodeState) {
     def analyse = new Node(node)
   }
 
-  implicit class PropertyAnalyser(property: PropertyState) {
+  implicit class AsProperty(property: PropertyState) {
     def analyse = Property(EMPTY, property)
+  }
+
+  implicit class AsSegmentAnalyser(segment: Segment) {
+    def analyse = new SegmentAnalyser(segment)
   }
 
 }
