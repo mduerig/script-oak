@@ -15,7 +15,6 @@ object Items {
   sealed trait Item {
     val name: String = ""
     def path: String = Items.path(this)
-    def / (name: String): Item = Items.getChild(this, name)
   }
 
   /** Empty node having no parent. Used as parent for root nodes */
@@ -28,11 +27,15 @@ object Items {
     def node(name: String): Node =
       Node(this, name, state.getChildNode(name))
 
+    def / (name: String): Node = node(name)
+
     def property(name: String): Property = {
       Property(this, Option(
         state.getProperty(name))
           .getOrElse(emptyProperty(name, Type.STRINGS)))
     }
+
+    def /# (name: String): Property = property(name)
 
     /** Direct child nodes of this node */
     def nodes: Stream[Node] =
@@ -112,11 +115,4 @@ object Items {
     case v@Value(parent, _, _, _) => path(parent) + v.name
   }
 
-  def getChild(parent: Item, name: String): Item = parent match {
-    case n@Node(_, _, state) if state.hasChildNode(name) =>
-      n.node(name)
-    case n@Node(_, _, state) if state.hasProperty(name) =>
-      n.property(name)
-    case _ => sys.error(s"No such item: $name")
-  }
 }
