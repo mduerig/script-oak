@@ -1,6 +1,6 @@
 package michid.script
 
-import ammonite.ops.{Path, read, resource}
+import ammonite.ops.{Path, read, resource, pwd}
 import michid.script.oak.filestore.FileStoreAnalyser
 import org.apache.jackrabbit.oak.plugins.blob.datastore.{DataStoreBlobStore, OakFileDataStore}
 import org.apache.jackrabbit.oak.segment.file.tooling.BasicReadOnlyBlobStore
@@ -20,12 +20,18 @@ package object oak {
     new DataStoreBlobStore(delegate)
   }
 
-  /** Create a new file store analyser */
+  /** Create a new file store analyser. If no data store exists at the given path the
+    * segment store is created without an external data store. */
   def fileStoreAnalyser(
-       directory: Path,
-       blobStore: Option[BlobStore] = None,
-       readOnly: Boolean = true): FileStoreAnalyser =
-    new FileStoreAnalyser(directory, blobStore, readOnly)
+        segmentStoreDirectory: Path = pwd / "segmentstore",
+        dataStoreDirectory: Path = pwd / "datastore",
+        readOnly: Boolean = true)
+  : FileStoreAnalyser = {
+    val blobStore =
+      if (dataStoreDirectory.toIO.exists()) Some(newBlobStore(dataStoreDirectory))
+      else None
+    new FileStoreAnalyser(segmentStoreDirectory, blobStore, readOnly)
+  }
 
   /** read a script from /scripts */
   def script(name: String): String = read! resource/'scripts/name
