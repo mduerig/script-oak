@@ -47,8 +47,8 @@ class FileStoreAnalyser(
   def changes(projection: Projection = root): Stream[(Stream[Change], Date)] =
     Changes(journal.roots map projection, projection.path) zip (journal.entries map (_._2))
 
-  def segments: Iterable[Segment] = readOnlyStore.map {
-      _.getSegmentIds.asScala.map(_.getSegment)
+  def segments: Stream[Segment] = readOnlyStore.map {
+      _.getSegmentIds.asScala.toStream.map(_.getSegment)
     }.getOrElse(sys.error("Cannot iterate segment on a r/w store"))
 
   val tars: Iterable[Tar] =
