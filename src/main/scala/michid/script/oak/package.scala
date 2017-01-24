@@ -1,6 +1,7 @@
 package michid.script
 
 import ammonite.ops.{Path, pwd, read, resource}
+import ammonite.runtime.InterpBridge
 import michid.script.oak.filestore.{FileStoreAnalyser, SegmentAnalyser}
 import michid.script.oak.nodestore.Items.{EMPTY, Node, Property}
 import org.apache.jackrabbit.oak.api.PropertyState
@@ -39,6 +40,11 @@ package object oak {
 
   /** read a script from /scripts */
   def script(name: String): String = read! resource/'scripts/name
+
+  /** Execute a string as a script */
+  implicit class RunScript(script: String) {
+    def run(): Unit = InterpBridge.value0.load(script)
+  }
 
   implicit class AsNode(node: NodeState) {
     def analyse = new Node(node)
