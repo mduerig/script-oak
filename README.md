@@ -1,66 +1,24 @@
 Support and scripts for working with [Jackrabbit Oak](http://jackrabbit.apache.org/oak/) in the
 [Ammonite REPL](https://lihaoyi.github.io/Ammonite/).
 
-After starting Ammonite load this library:
+After starting Ammonite load this library and import some pre-defs:
 
-    import $ivy.`michid:script-oak:1.3-SNAPSHOT`
+    import $ivy.`michid:script-oak:1.3-SNAPSHOT`, michid.script.oak._
 
-Now import some pre-defs:
+Now you can explore the various built in [scripts](src/main/resources/scripts) to learn about 
+script-oak's capabilities.
+ 
+Creating and accessing a JCR repository ([RepositoryDemo.scala](src/main/resources/scripts/RepositoryDemo.scala)):
+ 
+    // Load the script
+    val repoDemo = script("RepositoryDemo.scala")
+    
+    // Browse the script
+    browse(repoDemo)
+    
+    // Execute the script
+    repoDemo.run
 
-    import michid.script.oak._
+Analysing a file store ([FileStoreDemo.scala](src/main/resources/scripts/FileStoreDemo.scala)):
 
-To create a new repository and open a session try this:
-
-    val jcr = new org.apache.jackrabbit.oak.jcr.Jcr
-    val repo = jcr.createRepository
-    val creds = new javax.jcr.SimpleCredentials("admin", "admin".toCharArray)
-    val session = repo.login(creds)
-    val root = session.getRootNode
-    root.addNode("foo")
-    ...
-
-
-To import a built in script:
-
-    interp.load(script("TarAnalysis.scala"))
-    
-Now list list the tar files in `segmentstore` using the `tars()` function from the script just 
-loaded:
-    
-    tars(cwd/"segmentstore")
-    
-    
-To analyse a file store:
-    
-    // Assuming we have a data store. Otherwise pass None
-    // as 2nd argument to fileStoreAnalyser() 
-    val ds = newBlobStore(cwd/"datastore")
-    val fs = fileStoreAnalyser(cwd/"segmentstore", Some(ds))
-    
-    val superRoot = fs.getNode()
-    val rootNode = fs.getNode("root")
-    ...
-
-Analysing the items in a file store:
-
-    import michid.script.oak.nodestore.Items._
-    
-    // All nodes flat
-    val nodes = collectNodes(root(fs.getNode("root")))
-    
-    // Find all nodes with 2 child nodes
-    nodes.filter(_.nodes.size == 2)
-    
-    // Group properties by number of values
-    val properties = collectProperties(root(fs.getNode("root")))
-    val byPropertyCount = properties.groupBy(_.values.size)
-    
-    // Number of nodes with a given number of properties in decreasing order
-    val noOfProps = byPropertyCount.mapValues(_.size).toList.sortBy(-_._2)
-    
-    // Number values per value type 
-    val values = collectValues(root(fs.getNode("root")))
-    values.groupBy(_.tyqe).mapValues(_.size)
-    
-    // Number of bytes per value type
-    values.groupBy(_.tyqe).mapValues(_.map(v => v.parent.state.size(v.index)).sum)
+    script("FileStoreDemo.scala").run

@@ -9,9 +9,6 @@ import scala.collection.JavaConverters._
 
 /** Extract nodes, properties and values */
 object Items {
-  def root(root: NodeState): Node =
-    new Node(root)
-
   sealed trait Item {
     val name: String = ""
     def path: String = Items.path(this)
