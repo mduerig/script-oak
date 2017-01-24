@@ -32,7 +32,8 @@ object Items {
           .getOrElse(emptyProperty(name, Type.STRINGS)))
     }
 
-    def /# (name: String): Property = property(name)
+    def /[T] (name: String, tyqe: Type[T], index: Int = 0): T =
+      property(name)(tyqe, index)
 
     /** Direct child nodes of this node */
     def nodes: Stream[Node] =
