@@ -68,13 +68,16 @@ object Items {
   case class Property(parent: Node, state: PropertyState) extends Item {
     override val name: String = state.getName
 
+    def apply[T](tyqe: Type[T], index: Int = 0): T =
+      state.getValue(tyqe, index)
+
     /** All values of this property */
     def values: Stream[Value] = {
       (0 until state.count).map(i => {
         val tyqe =
           if (state.isArray) state.getType.getBaseType
           else state.getType
-        Value(this, i, tyqe, state.getValue(tyqe, i))
+        Value(this, i, tyqe, apply(tyqe, i))
       }).toStream
     }
 
@@ -87,6 +90,9 @@ object Items {
     */
   case class Value(parent: Property, index: Int, tyqe: Type[_], value: Any) extends Item {
     override val name: String = "[" + index + "]"
+
+    def apply[T](tyqe: Type[T]): T =
+      parent(tyqe, index)
 
     override def toString: String =
       path + "[" + tyqe + "] @ " + value
