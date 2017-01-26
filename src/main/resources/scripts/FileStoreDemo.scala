@@ -2,7 +2,7 @@ import michid.script.oak._
 
 // Assuming a file store at ./segmentstore
 implicit val fs = fileStoreAnalyser()
-val superRoot = fs.getNode()
+val superRoot = fs.getNode().analyse
 println(s"superRoot=$superRoot")
 
 val rootNode = fs.getNode("root");
@@ -36,3 +36,14 @@ println(s"valuesPerType=${valuesPerType}")
 // Number of bytes per value type
 val bytesPerValue = values.groupBy(_.tyqe).mapValues(_.map(v => v.parent.state.size(v.index)).sum)
 println(s"bytesPerValue=${bytesPerValue}")
+
+// Checkpoints ordered by creation time
+import org.apache.jackrabbit.oak.api.Type._
+val checkpoints = (superRoot/"checkpoints").nodes.sortBy(_/("created", DATE)).map(_/"root")
+
+// Turnover across checkpoints
+import michid.script.oak.nodestore.Changes
+val roots = checkpoints :+ superRoot/"root"
+val changes = Changes(roots.map(_.state), "")
+val changeTurnover = changes.map(Changes.turnOver(_))
+
