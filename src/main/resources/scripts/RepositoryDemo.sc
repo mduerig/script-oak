@@ -1,3 +1,4 @@
+import $ivy.`michid:script-oak:1.3+`
 import michid.script.oak._
 
 val jcr = new org.apache.jackrabbit.oak.jcr.Jcr
@@ -6,4 +7,4 @@ val creds = new javax.jcr.SimpleCredentials("admin", "admin".toCharArray)
 val session = repo.login(creds)
 val root = session.getRootNode
 root.addNode("foo").setProperty("bar", 42)
-println(root.getNode("foo"))
+println(s"root=${root.getNode("foo")}")
