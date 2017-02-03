@@ -1,5 +1,6 @@
 package michid.script.oak.filestore
 
+import java.io.File
 import java.util.Date
 
 import scala.collection.JavaConverters._
@@ -9,7 +10,7 @@ import michid.script.oak.nodestore.Projection.root
 import michid.script.oak.nodestore.{Changes, Projection}
 import org.apache.jackrabbit.oak.segment.Segment
 import org.apache.jackrabbit.oak.segment.file.FileStoreBuilder.fileStoreBuilder
-import org.apache.jackrabbit.oak.segment.file.{AbstractFileStore, FileStore, ReadOnlyFileStore}
+import org.apache.jackrabbit.oak.segment.file._
 import org.apache.jackrabbit.oak.spi.blob.BlobStore
 import org.apache.jackrabbit.oak.spi.state.NodeState
 
@@ -18,8 +19,17 @@ class FileStoreAnalyser(
        val blobStore: Option[BlobStore] = None,
        val readOnly: Boolean = true) {
 
+  val ioMonitorTracker = new IOMonitor {
+    @volatile
+    var ioMonitor: IOMonitor = new IOMonitorAdapter
+
+    override def onSegmentRead(file: File, msb: Long, lsb: Long, length: Int): Unit =
+      ioMonitor.onSegmentRead(file, msb, lsb, length)
+  }
+
   val eitherStore: Either[FileStore, ReadOnlyFileStore] = {
     val builder = fileStoreBuilder(directory.toNIO.toFile)
+            .withIOMonitor(ioMonitorTracker)
     blobStore.foreach(blobStore => builder.withBlobStore(blobStore))
     if (readOnly) Right(builder.buildReadOnly())
     else Left(builder.build())
@@ -33,6 +43,9 @@ class FileStoreAnalyser(
 
   val readWriteStore: Option[FileStore] =
     eitherStore.fold(rw => Some(rw), ro => None)
+
+  def setIOMonitor(ioMonitor: IOMonitor): Unit =
+    ioMonitorTracker.ioMonitor = ioMonitor
 
   def getNode(path: String = "/"): NodeState =
     Projection(path)(store.getHead)
