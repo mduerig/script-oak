@@ -21,7 +21,6 @@ class InMemoryIOMonitor extends IOMonitor{
     reads.getOrElseUpdate((msb, lsb), SegmentAccess(Path(file), msb, lsb))
             .accessed(currentTimeMillis())
   }
-
 }
 
 case class SegmentAccess(path: Path, lsb: Long, msb: Long) {

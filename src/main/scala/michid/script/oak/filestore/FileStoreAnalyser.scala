@@ -66,4 +66,17 @@ class FileStoreAnalyser(
 
   val tars: Iterable[Tar] =
     (ls ! directory) |? (_.ext == "tar") | (Tar(_))
+
+  def collectIOStats[T <: IOMonitor](ioMonitor: => T)(thunk: => Unit): T = {
+    val monitor: T = ioMonitor
+    setIOMonitor(monitor)
+    try {
+      thunk
+      monitor
+    } catch {
+      case e: Throwable =>
+        setIOMonitor(new IOMonitorAdapter)
+        throw e
+    }
+  }
 }
