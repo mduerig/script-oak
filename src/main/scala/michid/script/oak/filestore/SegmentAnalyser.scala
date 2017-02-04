@@ -2,7 +2,10 @@ package michid.script.oak.filestore
 
 import java.util.UUID
 
+import scala.collection.JavaConverters._
+
 import michid.script.oak.filestore.SegmentAnalyser.Record
+import org.apache.jackrabbit.oak.commons.json.{JsonObject, JsopTokenizer}
 import org.apache.jackrabbit.oak.segment.{RecordType, Segment, SegmentId}
 import org.apache.jackrabbit.oak.segment.Segment.RecordConsumer
 import org.apache.jackrabbit.oak.segment.SegmentId.isDataSegmentId
@@ -11,6 +14,13 @@ import scala.collection.mutable
 
 class SegmentAnalyser(val segment: Segment) {
   def id: SegmentId = segment.getSegmentId
+
+  def info: Map[String, String] = {
+    val tokenizer = new JsopTokenizer(segment.getSegmentInfo)
+    tokenizer.read('{')
+    val properties = JsonObject.create(tokenizer).getProperties
+    properties.asScala.toMap
+  }
 
   def dump: String = segment.toString
 
