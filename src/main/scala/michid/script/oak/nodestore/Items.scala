@@ -78,7 +78,7 @@ object Items {
         val tyqe =
           if (state.isArray) state.getType.getBaseType
           else state.getType
-        Value(this, i, tyqe, apply(tyqe, i))
+        Value(this, i, tyqe, state.size(i), apply(tyqe, i))
       }).toStream
     }
 
@@ -89,7 +89,7 @@ object Items {
   /** Property value wrapper providing access to the parent property, the index of this value
     * in its parent, its value and its type.
     */
-  case class Value(parent: Property, index: Int, tyqe: Type[_], value: Any) extends Item {
+  case class Value(parent: Property, index: Int, tyqe: Type[_], size: Long, value: Any) extends Item {
     override val name: String = "[" + index + "]"
 
     def apply[T](tyqe: Type[T]): T =
@@ -116,7 +116,7 @@ object Items {
     case EMPTY => EMPTY.name
     case n@Node(parent, _, _) => path(parent) + "/" + n.name
     case p@Property(parent, _) => path(parent) + "/" + p.name
-    case v@Value(parent, _, _, _) => path(parent) + v.name
+    case v@Value(parent, _, _, _, _) => path(parent) + v.name
   }
 
 }
