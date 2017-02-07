@@ -11,13 +11,12 @@ import michid.script.oak.nodestore.{Changes, Projection}
 import org.apache.jackrabbit.oak.segment.Segment
 import org.apache.jackrabbit.oak.segment.file.FileStoreBuilder.fileStoreBuilder
 import org.apache.jackrabbit.oak.segment.file._
-import org.apache.jackrabbit.oak.spi.blob.BlobStore
 import org.apache.jackrabbit.oak.spi.state.NodeState
 
 class FileStoreAnalyser(
-       val directory: Path,
-       val blobStore: Option[BlobStore] = None,
-       val readOnly: Boolean = true) {
+        directory: Path,
+        readOnly: Boolean = true,
+        builder: Path => FileStoreBuilder = path => fileStoreBuilder(path.toNIO.toFile)) {
 
   val ioMonitorTracker = new IOMonitor {
     @volatile
@@ -28,11 +27,9 @@ class FileStoreAnalyser(
   }
 
   val eitherStore: Either[FileStore, ReadOnlyFileStore] = {
-    val builder = fileStoreBuilder(directory.toNIO.toFile)
-            .withIOMonitor(ioMonitorTracker)
-    blobStore.foreach(blobStore => builder.withBlobStore(blobStore))
-    if (readOnly) Right(builder.buildReadOnly())
-    else Left(builder.build())
+    val fsb = builder(directory).withIOMonitor(ioMonitorTracker)
+    if (readOnly) Right(fsb.buildReadOnly())
+    else Left(fsb.build())
   }
 
   val store: AbstractFileStore =

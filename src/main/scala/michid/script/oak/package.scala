@@ -7,6 +7,8 @@ import michid.script.oak.nodestore.Items.{EMPTY, Node, Property}
 import org.apache.jackrabbit.oak.api.PropertyState
 import org.apache.jackrabbit.oak.plugins.blob.datastore.{DataStoreBlobStore, OakFileDataStore}
 import org.apache.jackrabbit.oak.segment.Segment
+import org.apache.jackrabbit.oak.segment.file.FileStoreBuilder
+import org.apache.jackrabbit.oak.segment.file.FileStoreBuilder.fileStoreBuilder
 import org.apache.jackrabbit.oak.segment.file.tooling.BasicReadOnlyBlobStore
 import org.apache.jackrabbit.oak.spi.blob.BlobStore
 import org.apache.jackrabbit.oak.spi.state.NodeState
@@ -26,16 +28,19 @@ package object oak {
   }
 
   /** Create a new file store analyser. If no data store exists at the given path the
-    * segment store is created without an external data store. */
+    * segment store is created without an external data store unless one is specified
+    * within the passed builder. */
   def fileStoreAnalyser(
         segmentStoreDirectory: Path = pwd / "segmentstore",
         dataStoreDirectory: Path = pwd / "datastore",
-        readOnly: Boolean = true)
+        readOnly: Boolean = true,
+        builder: Path => FileStoreBuilder = path => fileStoreBuilder(path.toNIO.toFile))
   : FileStoreAnalyser = {
-    val blobStore =
-      if (dataStoreDirectory.toIO.exists()) Some(newBlobStore(dataStoreDirectory))
-      else None
-    new FileStoreAnalyser(segmentStoreDirectory, blobStore, readOnly)
+    if (dataStoreDirectory.toIO.exists())
+      new FileStoreAnalyser(segmentStoreDirectory, readOnly,
+        builder(_).withBlobStore(newBlobStore(dataStoreDirectory)))
+    else
+      new FileStoreAnalyser(segmentStoreDirectory, readOnly, builder)
   }
 
   /** read a script from /scripts */
