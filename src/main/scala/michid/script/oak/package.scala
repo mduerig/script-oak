@@ -19,6 +19,14 @@ package object oak {
   /** A blob store that actually ignores the binaries. Useful if the blob store is not available  */
   val dummyBlobStore: BlobStore = new BasicReadOnlyBlobStore
 
+  /** A plain file store builder that can be customised and passed to pass to fileStoreAnalyser */
+  val plainFileStoreBuilder: Path => FileStoreBuilder =
+    path => fileStoreBuilder(path.toNIO.toFile)
+
+  /** A customised file store builder, which configures a dummyBlobStore */
+  val dummyBlobStoreBuilder: Path => FileStoreBuilder =
+    plainFileStoreBuilder(_).withBlobStore(dummyBlobStore)
+
   /** A file data store based blob store */
   def newBlobStore(directory: Path): BlobStore = {
     val delegate = new OakFileDataStore
@@ -34,7 +42,7 @@ package object oak {
         segmentStoreDirectory: Path = pwd / "segmentstore",
         dataStoreDirectory: Path = pwd / "datastore",
         readOnly: Boolean = true,
-        builder: Path => FileStoreBuilder = path => fileStoreBuilder(path.toNIO.toFile))
+        builder: Path => FileStoreBuilder = plainFileStoreBuilder)
   : FileStoreAnalyser = {
     if (dataStoreDirectory.toIO.exists())
       new FileStoreAnalyser(segmentStoreDirectory, readOnly,
