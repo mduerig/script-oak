@@ -70,10 +70,8 @@ class FileStoreAnalyser(
     try {
       thunk
       monitor
-    } catch {
-      case e: Throwable =>
+    } finally {
         setIOMonitor(new IOMonitorAdapter)
-        throw e
     }
   }
 }
