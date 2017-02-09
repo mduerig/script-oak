@@ -1,28 +1,33 @@
-import $ivy.`michid:script-oak:1.3+`, michid.script.oak._
-
-import michid.script.oak._
-import michid.script.oak.nodestore.Items._
-import michid.script.oak.filestore.InMemoryIOMonitor
-import michid.script.oak.filestore.SegmentAnalyser._
-import org.apache.jackrabbit.oak.segment.SegmentId
+import $ivy.`michid:script-oak:latest.integration`
+import $ivy.`org.sameersingh.scalaplot:scalaplot:latest.integration`
 
 import scala.collection.Set
 
-/** Calculate the segment cover for that given path. The segment cover includes exactly
-  * those segments that need to be read from when traversing all items on the given path. */
-def segmentCover(path: String): Set[(Long, Long)] = {
-  val fs = fileStoreAnalyser(builder = dummyBlobStoreBuilder)
-  fs.collectIOStats(InMemoryIOMonitor.apply()) {
-    collectValues(fs.getNode(path).analyse).size
-  }
-  .reads.keySet
-}
+import org.apache.jackrabbit.oak.segment.SegmentId
 
-/** Segment usage of the given path: ordered list of all *data* segments with a flag indicating
-  * whether a segment is covered by the given path or not.*/
+import michid.script.oak._
+import michid.script.oak.nodestore.Items._
+import michid.script.oak.filestore.SegmentAnalyser._
+import michid.script.oak.filestore.InMemoryIOMonitor
+
+import org.sameersingh.scalaplot.Implicits._
+import org.sameersingh.scalaplot.XYPlotStyle
+import org.sameersingh.scalaplot.Style.PointType
+import org.sameersingh.scalaplot.XYData
+import org.sameersingh.scalaplot.LegendPosX
+
+import org.sameersingh.scalaplot.XYChart
+
+/** Segment usage of the given path: chronologically ordered list of all *data*
+  * segments with a flag indicating whether a segment is covered by the given
+  * path or not.*/
 def segmentUsage(path: String): Stream[(SegmentId, Boolean)] = {
   val fs = fileStoreAnalyser(builder = dummyBlobStoreBuilder)
-  val cover = segmentCover(path)
+  val segmentCover = fs.collectIOStats(InMemoryIOMonitor.apply()) {
+    collectValues(fs.getNode(path).analyse).size
+  }
+          .reads.keySet
+
   val dataSegments = fs.segments
           .map(_.analyse)
           .filter(isData)
@@ -30,12 +35,28 @@ def segmentUsage(path: String): Stream[(SegmentId, Boolean)] = {
           .map(_.id)
 
   dataSegments.map(id =>
-    (id, cover.contains(id.getMostSignificantBits, id.getLeastSignificantBits)))
+    (id, segmentCover.contains(id.getMostSignificantBits, id.getLeastSignificantBits)))
 }
 
-/** Indexes of the used segments wrt. to the list of all *data* segments. */
-def indexOfUsedSegments(path: String): Stream[Int] =
-  segmentUsage(path)
-          .map(_._2)
-          .zipWithIndex.filter(_._1)
-          .map(_._2)
+/** Incidence series (as scalaplot XYData) from a sequence of segment usages. */
+def incidenceSeries(segmentUsages: Seq[Seq[(SegmentId, Boolean)]], labels: Seq[String]): XYData = {
+  def segmentUsageGraph(segmentUsage: Seq[(SegmentId, Boolean)]): Seq[Double] = {
+    segmentUsage.zipWithIndex
+            .filter{case((_,b),_) => b}
+            .map{case(_, x) => x.toDouble}
+  }
+
+  val graphs = segmentUsages.map(segmentUsageGraph)
+  (graphs zip labels).zipWithIndex.map {
+    case((x, path), y) => x -> Yf(_ => -y - 0.5, label=path, style=XYPlotStyle.Points, pt = Some(PointType.fullO))}
+}
+
+/** Incidence series (as scalaplot XYData) for the segment usages of a list of paths. */
+def incidenceSeries(paths: Seq[String]): XYData =
+  incidenceSeries(paths.map(segmentUsage), paths)
+
+/** Write a plot in png format */
+def writePlot(xyData: XYData, file: Path, showLegend: Boolean = true, range: Option[(Double, Double)] = None, size: Option[(Double, Double)] = Some(1000, 400)): Unit = {
+  val chart = xyChart(xyData, x = Axis(range = range), showLegend=showLegend, legendPosX=LegendPosX.Right, size = size)
+  output(PNG(file.toIO.getParent + "/", file.toIO.getName), chart)
+}
