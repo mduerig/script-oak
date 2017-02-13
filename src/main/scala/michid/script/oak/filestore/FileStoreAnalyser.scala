@@ -18,12 +18,12 @@ class FileStoreAnalyser(
         readOnly: Boolean = true,
         builder: Path => FileStoreBuilder = path => fileStoreBuilder(path.toNIO.toFile)) {
 
-  val ioMonitorTracker = new IOMonitor {
+  val ioMonitorTracker = new IOMonitorAdapter {
     @volatile
     var ioMonitor: IOMonitor = new IOMonitorAdapter
 
-    override def onSegmentRead(file: File, msb: Long, lsb: Long, length: Int): Unit =
-      ioMonitor.onSegmentRead(file, msb, lsb, length)
+    override def beforeSegmentRead(file: File, msb: Long, lsb: Long, length: Int): Unit =
+      ioMonitor.beforeSegmentRead(file, msb, lsb, length)
   }
 
   val eitherStore: Either[FileStore, ReadOnlyFileStore] = {

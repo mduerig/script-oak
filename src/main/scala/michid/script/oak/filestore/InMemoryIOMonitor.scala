@@ -5,7 +5,7 @@ import java.lang.System.currentTimeMillis
 import java.util.UUID
 
 import ammonite.ops.Path
-import org.apache.jackrabbit.oak.segment.file.IOMonitor
+import org.apache.jackrabbit.oak.segment.file.IOMonitorAdapter
 
 import scala.collection.concurrent.{Map, TrieMap}
 import scala.collection.mutable.ListBuffer
@@ -14,10 +14,10 @@ import scala.collection.mutable.ListBuffer
   * In memory implementation of an IOMonitor mentoring read accesses to
   * segments.
   */
-class InMemoryIOMonitor extends IOMonitor{
+class InMemoryIOMonitor extends IOMonitorAdapter {
   val reads: Map[(Long, Long), SegmentAccess] = TrieMap()
 
-  override def onSegmentRead(file: File, msb: Long, lsb: Long, length: Int): Unit = {
+  override def beforeSegmentRead(file: File, msb: Long, lsb: Long, length: Int): Unit = {
     reads.getOrElseUpdate((msb, lsb), SegmentAccess(Path(file), msb, lsb))
             .accessed(currentTimeMillis())
   }
