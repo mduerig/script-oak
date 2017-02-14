@@ -1,32 +1,31 @@
 import $ivy.`michid:script-oak:latest.integration`
 import $ivy.`org.sameersingh.scalaplot:scalaplot:latest.integration`
 
-import scala.collection.Set
-
 import org.apache.jackrabbit.oak.segment.SegmentId
-
 import michid.script.oak._
 import michid.script.oak.nodestore.Items._
 import michid.script.oak.filestore.SegmentAnalyser._
-import michid.script.oak.filestore.InMemoryIOMonitor
-
+import michid.script.oak.filestore.{FileStoreAnalyser, InMemoryIOMonitor}
 import org.sameersingh.scalaplot.Implicits._
 import org.sameersingh.scalaplot.XYPlotStyle
 import org.sameersingh.scalaplot.Style.PointType
 import org.sameersingh.scalaplot.XYData
 import org.sameersingh.scalaplot.LegendPosX
-
 import org.sameersingh.scalaplot.XYChart
 
 /** Segment usage of the given path: chronologically ordered list of all *data*
   * segments with a flag indicating whether a segment is covered by the given
   * path or not.*/
-def segmentUsage(path: String): Stream[(SegmentId, Boolean)] = {
-  val fs = fileStoreAnalyser(builder = dummyBlobStoreBuilder)
+def segmentUsage(
+        path: String,
+        fileStoreAnalyserFactory: () => FileStoreAnalyser =
+          () => fileStoreAnalyser(builder = dummyBlobStoreBuilder))
+    : Stream[(SegmentId, Boolean)] = {
+  val fs = fileStoreAnalyserFactory()
   val segmentCover = fs.collectIOStats(InMemoryIOMonitor.apply()) {
     collectValues(fs.getNode(path).analyse).size
   }
-          .reads.keySet
+  .reads.keySet
 
   val dataSegments = fs.segments
           .map(_.analyse)
@@ -52,8 +51,12 @@ def incidenceSeries(segmentUsages: Seq[Seq[(SegmentId, Boolean)]], labels: Seq[S
 }
 
 /** Incidence series (as scalaplot XYData) for the segment usages of a list of paths. */
-def incidenceSeries(paths: Seq[String]): XYData =
-  incidenceSeries(paths.map(segmentUsage), paths)
+def incidenceSeries(
+      paths: Seq[String],
+      fileStoreAnalyserFactory: () => FileStoreAnalyser =
+        () => fileStoreAnalyser(builder = dummyBlobStoreBuilder))
+    : XYData =
+  incidenceSeries(paths.map(segmentUsage(_, fileStoreAnalyserFactory)), paths)
 
 /** Write a plot in png format */
 def writePlot(xyData: XYData, file: Path, showLegend: Boolean = true, range: Option[(Double, Double)] = None, size: Option[(Double, Double)] = Some(1000, 400)): Unit = {
