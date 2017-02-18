@@ -5,9 +5,10 @@ package michid.script.shell
   */
 object Main {
   def main(args: Array[String]): Unit = {
+    val version = getClass.getPackage.getImplementationVersion
     ammonite.Main(
-      welcomeBanner = Some("Welcome to Script Oak 1.3-SNAPSHOT"),  // michid dont hc
-      predef = "import $ivy.`michid:script-oak:1.3+`, michid.script.oak._"  // michid dont hc -> also fix this in the scripts
+      welcomeBanner = Some(s"Welcome to Script Oak $version"),
+      predef = s"import $$ivy.`michid:script-oak:$version`, michid.script.oak._"
     ).run()
   }
 }

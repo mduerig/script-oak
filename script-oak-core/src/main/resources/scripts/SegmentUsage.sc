@@ -1,4 +1,4 @@
-import $ivy.`michid:script-oak:latest.integration`
+import $ivy.`${groupId}:${artifactId}:${project.version}`
 import $ivy.`org.sameersingh.scalaplot:scalaplot:latest.integration`
 
 import org.apache.jackrabbit.oak.segment.SegmentId

@@ -1,4 +1,4 @@
-import $ivy.`michid:script-oak:1.3+`
+import $ivy.`${groupId}:${artifactId}:${project.version}`
 import michid.script.oak._
 
 val jcr = new org.apache.jackrabbit.oak.jcr.Jcr
