@@ -1,9 +1,14 @@
 Support and scripts for working with [Jackrabbit Oak](http://jackrabbit.apache.org/oak/) in the
-[Ammonite REPL](https://lihaoyi.github.io/Ammonite/).
+[Ammonite Shell](https://lihaoyi.github.io/Ammonite/). 
 
-After starting Ammonite load this library and import some pre-defs:
+In a running Ammonite shell import the Script Oak library and its main API entry point:
 
-    import $ivy.`michid:script-oak:1.3-SNAPSHOT`, michid.script.oak._
+    import $ivy.`michid:script-oak:latest.integration`, michid.script.oak._
+    
+Alternatively start the pre-built shell, which already includes Script Oak and doesn't require
+above extra step:
+
+    java -jar script-oak-shell*.jar
 
 Now you can explore the various built in [scripts](src/main/resources/scripts) to learn about 
 script-oak's capabilities.
