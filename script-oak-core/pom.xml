@@ -56,7 +56,7 @@
     </dependency>
     <dependency>
       <groupId>com.lihaoyi</groupId>
-      <artifactId>ammonite-repl_2.12.1</artifactId>
+      <artifactId>ammonite-repl_2.12.0</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
