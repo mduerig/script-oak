@@ -60,7 +60,6 @@
     <dependency>
       <groupId>com.lihaoyi</groupId>
       <artifactId>ammonite_2.12.1</artifactId>
-      <version>${amm.version}</version>
     </dependency>
   </dependencies>
 </project>

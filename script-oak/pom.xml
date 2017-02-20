@@ -41,7 +41,6 @@
     <dependency>
       <groupId>michid</groupId>
       <artifactId>script-oak-core</artifactId>
-      <version>${project.version}</version>
     </dependency>
   </dependencies>
 
