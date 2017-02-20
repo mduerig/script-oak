@@ -1,4 +1,4 @@
-import $ivy.`${groupId}:${artifactId}:${project.version}`, michid.script.oak._
+import $ivy.`michid:script-oak:${project.version}`, michid.script.oak._
 
 import michid.script.oak._
 import michid.script.oak.filestore.InMemoryIOMonitor
