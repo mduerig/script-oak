@@ -53,4 +53,22 @@ class ScriptOakIntegrationTest extends fixture.FunSuite {
     println("<out>" + o.toString + "</out>")
     println("<err>" + e.toString + "</err>")
   }
+
+  test("Main.main(-c)") { _ =>  // michid can't get redirecting io to work properly
+    val i = new ByteArrayInputStream("".getBytes(StandardCharsets.UTF_8))
+    val o = new ByteArrayOutputStream
+    val e = new ByteArrayOutputStream
+
+    Console.withIn(i) {
+      Console.withOut(o) {
+        Console.withErr(e) {
+          ammonite.Main.main(Array("""-c "println(42)" """))
+        }
+      }
+    }
+
+    println("<out>" + o.toString + "</out>")
+    println("<err>" + e.toString + "</err>")
+  }
+
 }
