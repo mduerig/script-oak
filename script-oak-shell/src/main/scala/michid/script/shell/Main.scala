@@ -7,7 +7,7 @@ object Main {
   val version:String = Option(getClass.getPackage.getImplementationVersion)
           .getOrElse("latest.integration")
 
-  val predef: String = s"import $$ivy.`michid:script-oak:$version`, michid.script.oak._"
+  val predef: String = s"import $$ivy.`michid:script-oak:$version`, michid.script.oak._, ammonite.ops._"
 
   def main(args: Array[String]): Unit = {
     val main = ammonite.Main(
