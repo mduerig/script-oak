@@ -4,7 +4,7 @@ import java.util.Date
 
 import michid.script.oak.nodestore.Changes._
 import michid.script.oak.nodestore.LifeLine.{allNodes, allProperties, mapToSize}
-import michid.script.oak.nodestore.PropertyStates.size
+import michid.script.oak.nodestore.ItemStates.propertySize
 import org.apache.jackrabbit.oak.api.{PropertyState, Type}
 import org.apache.jackrabbit.oak.spi.state.NodeState
 
@@ -102,6 +102,10 @@ object LifeLine {
 
   val allNodes: (String, NodeState) => Boolean = (_, _) => true
   val noNodes: (String, NodeState) => Boolean = (_, _) => false
+
+  private def size(property: PropertyState): Long = {
+    propertySize(skipExternal = true)(property)
+  }
 
   def bigBinary(minSize: Int = 0)(path: String, property: PropertyState): Boolean =
     (property.getType == Type.BINARY || property.getType == Type.BINARIES) && size(property) >= minSize

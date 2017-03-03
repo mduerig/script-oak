@@ -26,10 +26,9 @@ class SegmentAnalyser(val segment: Segment) {
 
   def records: List[Record] = {
     val rs = mutable.ArrayBuffer.empty[Record]
-    segment.forEachRecord(new RecordConsumer {
-      override def consume(number: Int, tyqe: RecordType, offset: Int): Unit =
-        rs += Record(segment, number, tyqe, offset)
-    })
+    segment.forEachRecord(
+      (number: Int, tyqe: RecordType, offset: Int) =>
+        rs += Record(segment, number, tyqe, offset))
     rs.toList
   }
 

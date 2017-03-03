@@ -16,6 +16,7 @@
  */
 package michid.script.oak.nodestore
 
+import michid.script.oak.nodestore.ItemStates.propertySize
 import org.apache.jackrabbit.oak.api.PropertyState
 import org.apache.jackrabbit.oak.plugins.memory.EmptyNodeState.EMPTY_NODE
 import org.apache.jackrabbit.oak.spi.state.{NodeState, NodeStateDiff}
@@ -118,7 +119,7 @@ object Changes {
 
   def turnOver(
       changes: Stream[Change],
-      size: PropertyState => Long = PropertyStates.size)
+      size: PropertyState => Long = propertySize(skipExternal = true))
   : TurnOver = {
     changes.foldLeft(new TurnOver())({
       case (turnOver, PropertyAdded(_, after)) =>
