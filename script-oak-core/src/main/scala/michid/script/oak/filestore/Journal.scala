@@ -29,7 +29,7 @@ object Journal {
   }
 
   def ids(lines: Iterable[String], store: AbstractFileStore): Iterable[RecordId] =
-    lines.map(line => RecordId.fromString(store, line))
+    lines.map(line => RecordId.fromString(store.getSegmentIdProvider, line))
 
   def nodes(recordIds: Iterable[RecordId], reader: SegmentReader): Iterable[SegmentNodeState] =
     recordIds.map(id => reader.readNode(id))

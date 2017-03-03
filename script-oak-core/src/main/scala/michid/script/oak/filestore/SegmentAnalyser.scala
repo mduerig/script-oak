@@ -39,7 +39,7 @@ class SegmentAnalyser(val segment: Segment) {
             .map(segment.getReferencedSegmentId)
 
     uuids.map{ uuid => new SegmentAnalyser(
-      fileStoreAnalyser.store.newSegmentId(
+      fileStoreAnalyser.store.getSegmentIdProvider.newSegmentId(
         uuid.getMostSignificantBits, uuid.getLeastSignificantBits).getSegment)}
   }
 
