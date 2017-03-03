@@ -26,6 +26,14 @@ object Items {
 
     def / (name: String): Node = node(name)
 
+    /** Determine whether `node` is a (transitive) parent of this node.
+      */
+    def hasParent(node: Node): Boolean = parent match {
+      case null => false
+      case p if p == node => true
+      case p => p.hasParent(node)
+    }
+
     def property(name: String): Property = {
       Property(this, Option(
         state.getProperty(name))
@@ -97,6 +105,66 @@ object Items {
 
     override def toString: String =
       path + "[" + tyqe + "] @ " + value
+  }
+
+  /** Fold function `g` over the tree rooted at `node`.
+    * The function `g` is called recursively receiving the current
+    * node and a stream of its recursively folded child nodes.
+    */
+  def fold[T](node: Node)(g: (Node, Stream[T]) => T): T = {
+    g(node, node.nodes.map(fold(_)(g)))
+  }
+
+  /** Weigher assigning a constant weight of `1` to every node.
+    */
+  val unitWeight: Node => Long = _ => 1
+
+  /** Weigher assigning the sum of all sizes of all properties to a node.
+    */
+  def propertySizeWeight(skipExternals: Boolean = true): Node => Long =
+    node => ItemStates.nodeSize(skipExternals)(node.state)
+
+  /** Weigh the nodes in the tree rooted at `node` with the given `weigher`.
+    */
+  def weighNodes(weigher: Node => Long)(node: Node): Long = {
+    fold[Long](node) { case(n, ts) => weigher(n) + ts.sum }
+  }
+
+  /** Collect those nodes in the tree rooted at `node` that are at or above
+    * a given threshold `minWeight` according to the passed `weigher`.
+    */
+  def collectNodes(weigher: Node => Long, minWeight: Long)(node: Node): Stream[(Long, Node)] = {
+    fold[(Long, Stream[(Long, Node)])](node) {
+      case(parent, childCounts) =>
+        val weight = childCounts.map(_._1).sum + weigher(parent)
+        val nodes = childCounts.flatMap(_._2)
+
+        if (weight >= minWeight) (weight, (weight, parent) #:: nodes)
+        else (weight, nodes)
+    }._2
+  }
+
+  /** Collect the top `n` node in the tree rooted at `node` using the passed
+    * `weigher`.
+    */
+  def rankNodes(weigher: Node => Long, n: Int)(node: Node): Stream[(Long, Node)] = {
+    def topN(nodes: Stream[(Long, Node)]): Stream[(Long, Node)] = {
+      nodes.sortBy(-_._1).take(n)
+    }
+
+    fold[(Long, Stream[(Long, Node)])](node) {
+      case(parent, childCounts) =>
+        val weight = childCounts.map(_._1).sum + weigher(parent)
+        val nodes = childCounts.flatMap(_._2)
+
+        (weight, topN((weight, parent) #:: nodes))
+    }._2
+  }
+
+  /** Filter retaining only maximal elements wrt. the order induced by the hierarchy
+    */
+  def filterParents(nodes: Stream[(Long, Node)]): Stream[(Long, Node)] = {
+    nodes.filter { case(_, n) => !nodes.exists(_._2.hasParent(n)) }
   }
 
   /** Reflexive transitive closure over the child nodes of the passed parent node */
