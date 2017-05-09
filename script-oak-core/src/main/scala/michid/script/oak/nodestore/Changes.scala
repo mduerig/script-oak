@@ -60,7 +60,7 @@ object Changes {
       }
       override def childNodeDeleted(name: String, before: NodeState): Boolean = {
         val childPath = path + "/" + name
-        changes += NodeRemoved(childPath, after) #:: Changes(before, EMPTY_NODE, childPath)
+        changes += NodeRemoved(childPath, before) #:: Changes(before, EMPTY_NODE, childPath)
         true
       }
       override def childNodeChanged(name: String, before: NodeState, after: NodeState): Boolean = {
