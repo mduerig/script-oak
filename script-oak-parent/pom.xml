@@ -10,8 +10,8 @@
 
   <properties>
     <oak.version>1.8-SNAPSHOT</oak.version>
-    <amm.version>0.8.2</amm.version>
-    <scala-version>2.12.0</scala-version>
+    <amm.version>0.8.5</amm.version>
+    <scala-version>2.12.2</scala-version>
   </properties>
 
   <url>https://github.com/mduerig/script-oak</url>
