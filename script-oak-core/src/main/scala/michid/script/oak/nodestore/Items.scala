@@ -169,7 +169,7 @@ object Items {
 
   /** Reflexive transitive closure over the child nodes of the passed parent node */
   def collectNodes(parent: Node): Stream[Node] =
-    Stream(parent) #::: parent.nodes.flatMap(collectNodes)
+    parent #:: parent.nodes.flatMap(collectNodes)
 
   /** All properties on the reflexive transitive closure over the child nodes of the passed parent node */
   def collectProperties(parent: Node): Stream[Property] =
