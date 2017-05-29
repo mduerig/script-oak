@@ -1,5 +1,6 @@
 package michid.script.oak.nodestore
 
+import michid.script.oak.LazyIterators
 import org.apache.jackrabbit.oak.api.{PropertyState, Type}
 import org.apache.jackrabbit.oak.plugins.memory.EmptyNodeState.EMPTY_NODE
 import org.apache.jackrabbit.oak.plugins.memory.EmptyPropertyState.emptyProperty
@@ -168,15 +169,20 @@ object Items {
   }
 
   /** Reflexive transitive closure over the child nodes of the passed parent node */
-  def collectNodes(parent: Node): Stream[Node] =
-    parent #:: parent.nodes.flatMap(collectNodes)
+  def collectNodes(parent: Node): Iterable[Node] = {
+    new Iterable[Node] {
+      override def iterator: Iterator[Node] =
+        LazyIterators.cons(parent,
+          LazyIterators.flatten(parent.nodes.iterator.map(collectNodes(_).iterator)))
+    }
+  }
 
   /** All properties on the reflexive transitive closure over the child nodes of the passed parent node */
-  def collectProperties(parent: Node): Stream[Property] =
+  def collectProperties(parent: Node): Iterable[Property] =
     collectNodes(parent).flatMap(_.properties)
 
   /** All values on the reflexive transitive closure over the child nodes of the passed parent node */
-  def collectValues(parent: Node): Stream[Value] =
+  def collectValues(parent: Node): Iterable[Value] =
     collectProperties(parent).flatMap(_.values)
 
   /** String representation of the path of an item */
