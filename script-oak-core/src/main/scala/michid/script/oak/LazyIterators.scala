@@ -1,5 +1,7 @@
 package michid.script.oak
 
+import java.util.NoSuchElementException
+
 /**
   * Utilities for really lazily concatenating iterators in constant memory
   */
@@ -23,21 +25,27 @@ object LazyIterators {
     * @return an iterator of the concatenation of `iterators`
     */
   def flatten[T](iterators: Iterator[Iterator[T]]): Iterator[T] = new Iterator[T] {
-    private var current: Iterator[T] = emptyIterator
+    private var currentIterator: Iterator[T] = emptyIterator
+    private var hasMore: Option[Boolean] = None
 
-    private def currentIterator(): Iterator[T] = {
-      while(!current.hasNext && iterators.hasNext) {
-        current = iterators.next()
+    override def hasNext: Boolean = {
+      // Memoizing the result of hasNext is crucial to performance when recursively
+      // traversing tree structures.
+      if (hasMore.isEmpty) {
+        while (!currentIterator.hasNext && iterators.hasNext) {
+          currentIterator = iterators.next
+        }
+        hasMore = Some(currentIterator.hasNext)
       }
-      current
+      hasMore.get
     }
 
-    override def hasNext: Boolean =
-      currentIterator().hasNext
-
-    override def next(): T =
-      currentIterator().next()
-
+    override def next: T =
+      if (hasNext) {
+        hasMore = None
+        currentIterator.next
+      }
+      else throw new NoSuchElementException
   }
 
 }
