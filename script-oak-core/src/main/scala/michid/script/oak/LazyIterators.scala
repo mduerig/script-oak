@@ -4,6 +4,7 @@ package michid.script.oak
   * Utilities for really lazily concatenating iterators in constant memory
   */
 object LazyIterators {
+  val emptyIterator: Iterator[Nothing] = Nil.iterator
 
   /**
     * @return an iterator with `head` prepended to `tail`
@@ -22,18 +23,21 @@ object LazyIterators {
     * @return an iterator of the concatenation of `iterators`
     */
   def flatten[T](iterators: Iterator[Iterator[T]]): Iterator[T] = new Iterator[T] {
-    private var current: Iterator[T] =
-      if (iterators.hasNext) iterators.next()
-      else Seq().iterator
+    private var current: Iterator[T] = emptyIterator
 
-    override def hasNext: Boolean = {
+    private def currentIterator(): Iterator[T] = {
       while(!current.hasNext && iterators.hasNext) {
         current = iterators.next()
       }
-      current.hasNext
+      current
     }
 
-    override def next(): T = current.next()
+    override def hasNext: Boolean =
+      currentIterator().hasNext
+
+    override def next(): T =
+      currentIterator().next()
+
   }
 
 }
