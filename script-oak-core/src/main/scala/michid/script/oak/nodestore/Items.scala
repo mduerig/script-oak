@@ -145,18 +145,20 @@ object Items {
     }._2
   }
 
-  /** Collect the top `n` node in the tree rooted at `node` using the passed
+  /** Collect the top `count` node in the tree rooted at `node` using the passed
     * `weigher`.
     */
-  def rankNodes(weigher: Node => Long, n: Int)(node: Node): Stream[(Long, Node)] = {
-    def topN(nodes: Stream[(Long, Node)]): Stream[(Long, Node)] = {
-      nodes.sortBy(-_._1).take(n)
+  def rankNodes(weigher: Node => Long, count: Int)(node: Node): Stream[(Long, Node)] = {
+    def topN(weights: Stream[(Long, Node)]): Stream[(Long, Node)] = {
+      weights.drop(count).foldLeft(weights.take(count)) {
+        case(ws, w) => (w #:: ws).sortBy(-_._1).take(count)
+      }
     }
 
     fold[(Long, Stream[(Long, Node)])](node) {
-      case(parent, childCounts) =>
-        val weight = childCounts.map(_._1).sum + weigher(parent)
-        val nodes = childCounts.flatMap(_._2)
+      case(parent, childWeights) =>
+        val weight = childWeights.map(_._1).sum + weigher(parent)
+        val nodes = childWeights.flatMap(_._2)
 
         (weight, topN((weight, parent) #:: nodes))
     }._2
