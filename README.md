@@ -13,10 +13,10 @@ above extra step:
 
     java -jar script-oak-shell*.jar
 
-Now you can explore the various built in [scripts](src/main/resources/scripts) to learn about 
+Now you can explore the various built in [scripts](script-oak-core/src/main/resources/scripts) to learn about 
 script-oak's capabilities.
  
-Creating and accessing a JCR repository ([RepositoryDemo.sc](src/main/resources/scripts/RepositoryDemo.sc)):
+Creating and accessing a JCR repository ([RepositoryDemo.sc](script-oak-core/src/main/resources/scripts/RepositoryDemo.sc)):
  
     // Load the script
     val repoDemo = script("RepositoryDemo.sc")
@@ -27,6 +27,6 @@ Creating and accessing a JCR repository ([RepositoryDemo.sc](src/main/resources/
     // Execute the script
     repoDemo.run
 
-Analysing a file store ([FileStoreDemo.sc](src/main/resources/scripts/FileStoreDemo.sc)):
+Analysing a file store ([FileStoreDemo.sc](script-oak-core/src/main/resources/scripts/FileStoreDemo.sc)):
 
     script("FileStoreDemo.sc").run
