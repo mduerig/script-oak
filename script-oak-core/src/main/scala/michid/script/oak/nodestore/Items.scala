@@ -116,6 +116,17 @@ object Items {
     g(node, node.nodes.map(fold(_)(g)))
   }
 
+  /** Fold functions `addChild` and `addParent` over the tree rooted at `node`.
+    * The `addChild` function is called to accumulate the recursively folded child
+    * nodes of every node. Subsequently the `addParent` is called receiving the
+    * current node and the child nodes accumulated through `addChild`.
+    */
+  def fold2[T](node: Node)(unitT: T)(addChild: (T, T) => T)(addParent: (Node, T) => T): T = {
+    addParent(node, node.nodes.foldLeft(unitT) {
+      case(children, child) =>
+        addChild(children, fold2(child)(unitT)(addChild)(addParent))})
+  }
+
   /** Weigher assigning a constant weight of `1` to every node.
     */
   val unitWeight: Node => Long = _ => 1
@@ -149,18 +160,22 @@ object Items {
     * `weigher`.
     */
   def rankNodes(weigher: Node => Long, count: Int)(node: Node): Stream[(Long, Node)] = {
-    def topN(weights: Stream[(Long, Node)]): Stream[(Long, Node)] = {
-      weights.drop(count).foldLeft(weights.take(count)) {
+
+    /** Keep the heaviest `count` weighted nodes. */
+    def topN(weightedNodes: Stream[(Long, Node)]): Stream[(Long, Node)] = {
+      weightedNodes.drop(count).foldLeft(weightedNodes.take(count)) {
         case(ws, w) => (w #:: ws).sortBy(-_._1).take(count)
       }
     }
 
-    fold[(Long, Stream[(Long, Node)])](node) {
-      case(parent, childWeights) =>
-        val weight = childWeights.map(_._1).sum + weigher(parent)
-        val nodes = childWeights.flatMap(_._2)
-
-        (weight, topN((weight, parent) #:: nodes))
+    fold2[(Long, Stream[(Long, Node)])](node)((0, Stream()))
+    // fold children
+    { case((weight1, weightedNodes1), (weight2, weightedNodes2)) =>
+      (weight1 + weight2, topN(weightedNodes1 #::: weightedNodes2)) }
+    // fold parent with folded children
+    { case(parentNode, (weight, weightedNodes)) =>
+        val parentWeight = weight + weigher(parentNode)
+        (parentWeight, topN((parentWeight, parentNode) #:: weightedNodes))
     }._2
   }
 
