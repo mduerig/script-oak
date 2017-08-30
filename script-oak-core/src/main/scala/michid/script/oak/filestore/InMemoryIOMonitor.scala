@@ -5,7 +5,7 @@ import java.lang.System.currentTimeMillis
 import java.util.UUID
 
 import ammonite.ops.Path
-import org.apache.jackrabbit.oak.segment.file.IOMonitorAdapter
+import org.apache.jackrabbit.oak.segment.file.tar.IOMonitorAdapter
 
 import scala.collection.concurrent.{Map, TrieMap}
 import scala.collection.mutable.ListBuffer

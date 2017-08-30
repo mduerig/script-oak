@@ -11,6 +11,7 @@ import michid.script.oak.nodestore.{Changes, Projection}
 import org.apache.jackrabbit.oak.segment.Segment
 import org.apache.jackrabbit.oak.segment.file.FileStoreBuilder.fileStoreBuilder
 import org.apache.jackrabbit.oak.segment.file._
+import org.apache.jackrabbit.oak.segment.file.tar.{IOMonitor, IOMonitorAdapter}
 import org.apache.jackrabbit.oak.spi.state.NodeState
 
 class FileStoreAnalyser(
