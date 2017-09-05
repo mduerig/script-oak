@@ -3,16 +3,17 @@ package michid.script.oak.filestore
 import java.io.File
 import java.util.Date
 
-import scala.collection.JavaConverters._
 import ammonite.ops.{Path, ls}
 import michid.script.oak.nodestore.Changes.Change
 import michid.script.oak.nodestore.Projection.root
 import michid.script.oak.nodestore.{Changes, Projection}
 import org.apache.jackrabbit.oak.segment.Segment
 import org.apache.jackrabbit.oak.segment.file.FileStoreBuilder.fileStoreBuilder
-import org.apache.jackrabbit.oak.segment.file._
+import org.apache.jackrabbit.oak.segment.file.{AbstractFileStore, FileStore, FileStoreBuilder, ReadOnlyFileStore}
 import org.apache.jackrabbit.oak.segment.file.tar.{IOMonitor, IOMonitorAdapter}
 import org.apache.jackrabbit.oak.spi.state.NodeState
+
+import scala.collection.JavaConverters._
 
 class FileStoreAnalyser(
         directory: Path,
