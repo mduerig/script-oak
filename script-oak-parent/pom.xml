@@ -98,6 +98,11 @@
         <artifactId>oak-segment-tar</artifactId>
         <version>${oak.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.apache.jackrabbit</groupId>
+        <artifactId>oak-tooling-api</artifactId>
+        <version>1.0-SNAPSHOT</version>
+      </dependency>
 
       <!-- Misc -->
       <dependency>
