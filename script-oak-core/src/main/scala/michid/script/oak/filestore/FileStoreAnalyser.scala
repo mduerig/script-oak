@@ -1,79 +1,60 @@
 package michid.script.oak.filestore
 
-import java.io.File
-import java.util.Date
+import java.io.Closeable
+import java.util.{Date, Optional, UUID}
 
-import ammonite.ops.{Path, ls}
 import michid.script.oak.nodestore.Changes.Change
 import michid.script.oak.nodestore.Projection.root
 import michid.script.oak.nodestore.{Changes, Projection}
-import org.apache.jackrabbit.oak.segment.Segment
-import org.apache.jackrabbit.oak.segment.file.FileStoreBuilder.fileStoreBuilder
-import org.apache.jackrabbit.oak.segment.file.{AbstractFileStore, FileStore, FileStoreBuilder, ReadOnlyFileStore}
-import org.apache.jackrabbit.oak.segment.file.tar.{IOMonitor, IOMonitorAdapter}
 import org.apache.jackrabbit.oak.spi.state.NodeState
+import org.apache.jackrabbit.oak.tooling.filestore.{IOMonitor, RecordId, Segment, Store, Tar}
 
 import scala.collection.JavaConverters._
 
-class FileStoreAnalyser(
-        directory: Path,
-        readOnly: Boolean = true,
-        builder: Path => FileStoreBuilder = path => fileStoreBuilder(path.toNIO.toFile)) {
+class FileStoreAnalyser(store: Store) {
 
-  val ioMonitorTracker = new IOMonitorAdapter {
-    @volatile
-    var ioMonitor: IOMonitor = new IOMonitorAdapter
+  private def nodeState(id: RecordId): NodeState = ??? // michid inject
 
-    override def beforeSegmentRead(file: File, msb: Long, lsb: Long, length: Int): Unit =
-      ioMonitor.beforeSegmentRead(file, msb, lsb, length)
-  }
+  def addIOMonitor(ioMonitor: IOMonitor): Closeable =
+    store.addIOMonitor(ioMonitor)
 
-  val eitherStore: Either[FileStore, ReadOnlyFileStore] = {
-    val fsb = builder(directory).withIOMonitor(ioMonitorTracker)
-    if (readOnly) Right(fsb.buildReadOnly())
-    else Left(fsb.build())
-  }
-
-  val store: AbstractFileStore =
-    eitherStore.fold(rw => rw, ro => ro)
-
-  val readOnlyStore: Option[ReadOnlyFileStore] =
-    eitherStore.fold(rw => None, ro => Some(ro))
-
-  val readWriteStore: Option[FileStore] =
-    eitherStore.fold(rw => Some(rw), ro => None)
-
-  def setIOMonitor(ioMonitor: IOMonitor): Unit =
-    ioMonitorTracker.ioMonitor = ioMonitor
-
+  // michid wrap
   def getNode(path: String = "/"): NodeState =
-    Projection(path)(store.getHead)
+    Projection(path)(nodeState(journal.head.rootId))
 
-  val journal: Journal = {
-    val entries = Journal.entries(directory/"journal.log")
-    val ids = Journal.ids(entries map (_._1), store)
-    val roots = Journal.nodes(ids, store.getReader)
-    new Journal(entries, ids, roots)
+  val journal: Stream[JournalEntry] =
+    store.journalEntries().asScala.toStream.map(JournalEntry(_))
+
+  // michid wrap
+  def changes(projection: Projection = root): Stream[(Stream[Change], Date)] =
+    Changes(journal.map(entry => projection(nodeState(entry.rootId))), projection.path) zip journal.map(_.timestamp)
+
+  def segment(id: UUID): Option[Segment] = {
+    asOption(store.segment(id))
   }
 
-  def changes(projection: Projection = root): Stream[(Stream[Change], Date)] =
-    Changes(journal.roots map projection, projection.path) zip (journal.entries map (_._2))
+  private def asOption[T](value: Optional[T]): Option[T] =
+    if (value.isPresent) Some(value.get)
+    else None
 
-  def segments: Stream[Segment] = readOnlyStore.map {
-      _.getSegmentIds.asScala.toStream.map(_.getSegment)
-    }.getOrElse(sys.error("Cannot iterate segment on a r/w store"))
+  // michid wrap Segment
+  def segments: Stream[Segment] = {
+    tars.flatMap(_.segmentIds().asScala)
+      .flatMap(segment)
+  }
 
-  val tars: Iterable[Tar] =
-    (ls ! directory) |? (_.ext == "tar") | (Tar(_))
+  // michid wrap Tar
+  val tars: Stream[Tar] =
+    store.tars().asScala.toStream
 
   def collectIOStats[T <: IOMonitor](ioMonitor: => T)(thunk: => Unit): T = {
     val monitor: T = ioMonitor
-    setIOMonitor(monitor)
+    val closer = addIOMonitor(monitor)
     try {
       thunk
       monitor
     } finally {
-        setIOMonitor(new IOMonitorAdapter)
+        closer.close()
     }
   }
 }

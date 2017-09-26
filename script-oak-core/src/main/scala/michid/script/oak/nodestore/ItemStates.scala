@@ -2,7 +2,6 @@ package michid.script.oak.nodestore
 
 import org.apache.jackrabbit.oak.api.Type.{BINARY, BINARIES}
 import org.apache.jackrabbit.oak.api.{Blob, PropertyState}
-import org.apache.jackrabbit.oak.segment.SegmentBlob
 import org.apache.jackrabbit.oak.spi.state.NodeState
 import scala.collection.JavaConverters._
 
@@ -13,15 +12,17 @@ object ItemStates {
     node.getProperties.asScala.map(propertySize(skipExternals)).sum
   }
 
+  private def isExternal(blob: Blob): Boolean =
+    blob.getContentIdentity != null
+
   /** The size of a property skipping optionally skipping externals:
     * the sum of the sizes of all its values where values from blob stores are
     * optionally counted as zero
     */
   def propertySize(skipExternal: Boolean)(property: PropertyState): Long = {
-    def blobSize(blob: Blob): Long = blob match {
-      case blob: SegmentBlob if blob.isExternal => 0
-      case _ => blob.length
-    }
+    def blobSize(blob: Blob): Long =
+      if (isExternal(blob)) 0
+      else blob.length
 
     val isBinary = property.getType == BINARY || property.getType == BINARIES
 

@@ -1,85 +1,43 @@
-package michid.script.oak.filestore {
+package michid.script.oak.filestore
 
-  import java.util.UUID
+import java.util.UUID
 
-  import scala.collection.JavaConverters._
-  import michid.script.oak.filestore.SegmentAnalyser.Record
-  import org.apache.jackrabbit.oak.segment.SegmentInfo
-  import org.apache.jackrabbit.oak.commons.json.{JsonObject, JsopTokenizer}
-  import org.apache.jackrabbit.oak.segment.{RecordType, Segment, SegmentId}
-  import org.apache.jackrabbit.oak.segment.SegmentId.isDataSegmentId
+import org.apache.jackrabbit.oak.tooling.filestore.{Record, Segment}
 
-  import scala.collection.mutable
+import scala.collection.JavaConverters._
 
-  class SegmentAnalyser(val segment: Segment) {
-    def id: SegmentId = segment.getSegmentId
+class SegmentAnalyser(val segment: Segment) {
+  def id: UUID = segment.id
 
-    def info: Map[String, String] = {
-      val tokenizer = new JsopTokenizer(SegmentInfo(segment))
-      tokenizer.read('{')
-      val properties = JsonObject.create(tokenizer).getProperties
-      properties.asScala.toMap
-    }
+  def info: Map[String, String] =
+    segment.metaData.info.asScala.toMap
 
-    def dump: String = segment.toString
+  def dump: String = segment.hexDump(true)
 
-    def records: List[Record] = {
-      val rs = mutable.ArrayBuffer.empty[Record]
-      segment.forEachRecord(
-        (number: Int, tyqe: RecordType, offset: Int) =>
-          rs += Record(segment, number, tyqe, offset))
-      rs.toList
-    }
+  def records: Stream[Record] =
+    segment.records.asScala.toStream
 
-    def references(implicit fileStoreAnalyser: FileStoreAnalyser): Iterable[SegmentAnalyser] = {
-      val uuids =
-        (0 until segment.getReferencedSegmentIdCount)
-                .map(segment.getReferencedSegmentId)
-
-      uuids.map { uuid =>
-        new SegmentAnalyser(
-          fileStoreAnalyser.store.getSegmentIdProvider.newSegmentId(
-            uuid.getMostSignificantBits, uuid.getLeastSignificantBits).getSegment)
-      }
-    }
-
-    override def toString: String =
-      s"${segment.getSegmentId} (${segment.size()}) bytes: ${SegmentInfo(segment)}, " +
-              s"Generation: ${segment.getGcGeneration}, Version: ${segment.getSegmentVersion}"
+  def references(implicit fileStoreAnalyser: FileStoreAnalyser): Stream[UUID] = {
+    segment.references.asScala.toStream
   }
 
-  object SegmentAnalyser {
+  override def toString: String = {
+    val compacted = if (segment.metaData.compacted) "compacted" else ""
 
-    case class Record(segment: Segment, number: Int, tyqe: RecordType, offset: Int) {
-      override def toString: String =
-        f"${segment.getSegmentId} $tyqe $number%08x: $offset%08x"
-    }
-
-    def isData(id: UUID): Boolean = isDataSegmentId(id.getLeastSignificantBits)
-
-    def isData(id: SegmentId): Boolean = isData(id.asUUID())
-
-    def isData(segment: Segment): Boolean = isData(segment.getSegmentId)
-
-    def isData(segmentAnalyser: SegmentAnalyser): Boolean = isData(segmentAnalyser.segment)
-
-    def isBulk(id: UUID): Boolean = !isData(id)
-
-    def isBulk(id: SegmentId): Boolean = isBulk(id.asUUID())
-
-    def isBulk(segment: Segment): Boolean = isBulk(segment.getSegmentId)
-
-    def isBulk(segmentAnalyser: SegmentAnalyser): Boolean = isBulk(segmentAnalyser.segment)
+    s"${segment.id()} (${segment.size()} bytes): " +
+    s"Version: ${segment.metaData.version}, " +
+    s"Generation: ${segment.metaData.generation} / ${segment.metaData.fullGeneration()} / $compacted"
   }
 
+  def isData: Boolean = segment.`type`() == Segment.Type.DATA
+  def isBulk: Boolean = segment.`type`() == Segment.Type.BULK
 }
 
-/* Hack access to package private members */
-package org.apache.jackrabbit.oak.segment {
-
-  object SegmentInfo {
-    def apply(segment: Segment): String = segment.getSegmentInfo
-  }
-
+object SegmentAnalyser {
+  def isDataSegmentId(lsb: Long): Boolean = (lsb >>> 60) == 0xAL
+  def isData(id: UUID): Boolean = (id.getLeastSignificantBits >>> 60) == 0xAL
+  def isData(segment: Segment): Boolean = isData(segment.id)
+  def isBulk(id: UUID): Boolean = !isData(id)
+  def isBulk(segment: Segment): Boolean = isBulk(segment.id)
 }
 

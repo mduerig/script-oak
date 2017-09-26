@@ -6,8 +6,9 @@ import michid.script.oak._
 
 object EmptyFileStore {
   val path: Path = {
-    val path = pwd / "target" / Random.nextInt(1000000).toString / "segmentstore"
-    fileStoreAnalyser(path, readOnly = false).store.close()
-    path
+//    val path = pwd / "target" / Random.nextInt(1000000).toString / "segmentstore"
+//    fileStoreAnalyser(path, readOnly = false).store.close()
+//    path
+    ??? // michid implement fixtures
   }
 }

@@ -9,7 +9,7 @@
   <packaging>pom</packaging>
 
   <properties>
-    <oak.version>1.8-SNAPSHOT</oak.version>
+    <oak.version>1.7.7</oak.version>
     <amm.version>0.8.5</amm.version>
     <scala-version>2.12.2</scala-version>
   </properties>
@@ -90,12 +90,7 @@
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
-        <artifactId>oak-jcr</artifactId>
-        <version>${oak.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.jackrabbit</groupId>
-        <artifactId>oak-segment-tar</artifactId>
+        <artifactId>oak-store-spi</artifactId>
         <version>${oak.version}</version>
       </dependency>
       <dependency>
@@ -109,11 +104,6 @@
         <groupId>commons-io</groupId>
         <artifactId>commons-io</artifactId>
         <version>2.5</version>
-      </dependency>
-      <dependency>
-        <groupId>org.kamranzafar</groupId>
-        <artifactId>jtar</artifactId>
-        <version>2.3</version>
       </dependency>
       <dependency>
         <groupId>ch.qos.logback</groupId>
