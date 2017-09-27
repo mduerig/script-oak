@@ -8,6 +8,8 @@ import org.apache.jackrabbit.oak.api.PropertyState
 import org.apache.jackrabbit.oak.spi.state.NodeState
 import org.apache.jackrabbit.oak.tooling.filestore.Segment
 
+// michid interp.repositories() ++= Seq(coursier.MavenRepository("file://" + java.lang.System.getProperties.get("user.home") + "/.m2/repository/"))
+
 /** Common predefs used by script-oak */
 package object oak {
 

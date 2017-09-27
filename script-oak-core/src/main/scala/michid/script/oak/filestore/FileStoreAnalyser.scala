@@ -11,7 +11,7 @@ import org.apache.jackrabbit.oak.tooling.filestore.{IOMonitor, RecordId, Segment
 
 import scala.collection.JavaConverters._
 
-class FileStoreAnalyser(store: Store) {
+class FileStoreAnalyser(store: Store) extends Closeable {
 
   private def nodeState(id: RecordId): NodeState = ??? // michid inject
 
@@ -57,4 +57,9 @@ class FileStoreAnalyser(store: Store) {
         closer.close()
     }
   }
+
+  override def close(): Unit = store match {
+      case closeable: Closeable => closeable.close()
+      case _ =>
+    }
 }

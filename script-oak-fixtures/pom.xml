@@ -27,6 +27,22 @@
 
   <dependencies>
     <dependency>
+      <!-- michid depend on released version of oak-segment-tar with tool api -->
+      <groupId>org.apache.jackrabbit</groupId>
+      <artifactId>oak-segment-tar</artifactId>
+      <version>1.8-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.jackrabbit</groupId>
+      <artifactId>oak-blob</artifactId>
+      <version>1.7.7</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.jackrabbit</groupId>
+      <artifactId>oak-blob-plugins</artifactId>
+      <version>1.7.7</version>
+    </dependency>
+    <dependency>
       <groupId>com.lihaoyi</groupId>
       <artifactId>ammonite-ops_2.12</artifactId>
     </dependency>
