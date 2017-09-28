@@ -7,8 +7,6 @@ object Main {
   val version: String = Option(getClass.getPackage.getImplementationVersion)
           .getOrElse("1.3-SNAPSHOT")  // michid latest.integration equivalent?
 
-  val oakVersion: String = "1.7.7"
-
   // michid .m2 resolve should be there by default
   private val predef: String = ("""
       |interp.repositories() ++= Seq(coursier.MavenRepository("file://" + java.lang.System.getProperties.get("user.home") + "/.m2/repository/"))
@@ -19,15 +17,15 @@ object Main {
   |""").stripMargin
 
   def main(args: Array[String]): Unit = {
-    val main = ammonite.Main(
-      predefCode = predef,
-      welcomeBanner = Some(s"Welcome to Script Oak $version")
-    )
-    if (args.length == 0) main.run()
-    else main.runCode(args(0))
-
-// michid allow passing parameters, fix running ITs
-//    ammonite.Main.main(args)
-//    ammonite.Main.main0("--predef-code" :: predef :: args.toList, System.in, System.out, System.err)
+    ammonite.Main.main(Array(
+      "--predef-code", predef,
+      "--banner", "Welcome to Script Oak " + version) ++
+      args)
   }
+
+  def run(script: String): Unit =
+    println(ammonite.Main.main0(List(
+      "--predef-code", predef,
+      "--code", script),
+      System.in, System.out, System.err))
 }

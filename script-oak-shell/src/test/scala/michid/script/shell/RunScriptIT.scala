@@ -13,9 +13,8 @@ class RunScriptIT extends FunSuite with ScriptRunner {
     } {
       case (out, err) =>
         assert(err.isEmpty)
-        assert(out.isEmpty)
+        assert(out.startsWith("foo"))
     }
   }
 
-  // TODO: Exercise deeper tests of the individual methods exposed by CheckpointOverlap.sc
 }
