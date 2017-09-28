@@ -7,7 +7,7 @@ import org.scalatest.junit.JUnitRunner
 @RunWith(classOf[JUnitRunner])
 class RepositoryDemoIT extends FunSuite with ScriptRunner {
 
-  test("Run RepositoryDemo") {
+  ignore("Run RepositoryDemo") {  // michid enable
     run {
       """script("RepositoryDemo.sc").run """
     } {

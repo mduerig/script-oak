@@ -9,8 +9,7 @@
   <packaging>pom</packaging>
 
   <properties>
-    <oak.version>1.7.7</oak.version>
-    <amm.version>0.8.5</amm.version>
+    <amm.version>1.0.2</amm.version>
     <scala-version>2.12.2</scala-version>
   </properties>
 
@@ -84,19 +83,9 @@
 
       <!-- Oak -->
       <dependency>
-        <groupId>michid</groupId>
-        <artifactId>script-oak-core</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.jackrabbit</groupId>
-        <artifactId>oak-store-spi</artifactId>
-        <version>${oak.version}</version>
-      </dependency>
-      <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>oak-tooling-api</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0-SNAPSHOT</version> <!-- michid remove snapshot dependency -->
       </dependency>
 
       <!-- Misc -->

@@ -7,7 +7,7 @@ import org.scalatest.junit.JUnitRunner
 @RunWith(classOf[JUnitRunner])
 class CheckpointOverlapIT extends FunSuite with ScriptRunner {
 
-  test("Run CheckpointOverlap.sc script") {
+  ignore("Run CheckpointOverlap.sc script") {  // michid enable
     run {
       """script("CheckpointOverlap.sc").run"""
     } {

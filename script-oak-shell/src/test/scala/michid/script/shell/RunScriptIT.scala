@@ -5,11 +5,11 @@ import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
-class SegmentUsageIT extends FunSuite with ScriptRunner {
+class RunScriptIT extends FunSuite with ScriptRunner {
 
-  ignore("Run SegmentUsage.sc script") {  // michid enable
+  test("run script") {
     run {
-      """script("SegmentUsage.sc").run"""
+      """println("foo")"""
     } {
       case (out, err) =>
         assert(err.isEmpty)
@@ -17,5 +17,5 @@ class SegmentUsageIT extends FunSuite with ScriptRunner {
     }
   }
 
-  // TODO: Exercise deeper tests of the individual methods exposed by SegmentUsage.sc
+  // TODO: Exercise deeper tests of the individual methods exposed by CheckpointOverlap.sc
 }

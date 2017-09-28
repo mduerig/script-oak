@@ -7,7 +7,7 @@ import org.scalatest.junit.JUnitRunner
 @RunWith(classOf[JUnitRunner])
 class FileStoreDemoIT extends FunSuite with ScriptRunner {
 
-  test("Run FileStoreDemo without a repository") {
+  ignore("Run FileStoreDemo without a repository") { // michid enbable
     run {
       """script("FileStoreDemo.sc").run"""
     } {
@@ -18,7 +18,7 @@ class FileStoreDemoIT extends FunSuite with ScriptRunner {
     }
   }
 
-  test("Run FileStoreDemo with an empty repository") {
+  ignore("Run FileStoreDemo with an empty repository") { // michid enable
     run {
       """
         |import $ivy.`michid:script-oak-fixtures:latest.integration`, michid.script.oak.fixtures.EmptyFileStore._
