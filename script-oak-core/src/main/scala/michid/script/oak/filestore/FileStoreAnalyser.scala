@@ -1,6 +1,7 @@
 package michid.script.oak.filestore
 
 import java.io.Closeable
+import java.util.function.Supplier
 import java.util.{Date, Optional, UUID}
 
 import michid.script.oak.nodestore.Changes.Change
@@ -13,7 +14,10 @@ import scala.collection.JavaConverters._
 
 class FileStoreAnalyser(store: Store) extends Closeable {
 
-  private def nodeState(id: RecordId): NodeState = ??? // michid inject
+  private def nodeState(id: RecordId): NodeState = {
+    store.cast(store.node(id), classOf[NodeState])
+      .orElseThrow(() => new Error(s"Record not found $id"))
+  }
 
   def addIOMonitor(ioMonitor: IOMonitor): Closeable =
     store.addIOMonitor(ioMonitor)
