@@ -4,13 +4,13 @@ package michid.script.shell
   * Main class for an interactive Scala shell including all Oak dependencies
   */
 object Main {
-  val version: String = Option(getClass.getPackage.getImplementationVersion)
+  val scriptOakVersion: String = Option(getClass.getPackage.getImplementationVersion)
           .getOrElse("1.3-SNAPSHOT")  // michid latest.integration equivalent?
 
   // michid .m2 resolve should be there by default
   private val predef: String = ("""
       |interp.repositories() ++= Seq(coursier.MavenRepository("file://" + java.lang.System.getProperties.get("user.home") + "/.m2/repository/"))
-      |interp.load.ivy(coursier.Dependency(coursier.Module("michid", "script-oak-fixtures"), """" + version +""""))
+      |interp.load.ivy(coursier.Dependency("michid"%"script-oak-fixtures", """" + scriptOakVersion +""""))
       |@
       |import michid.script.oak._
       |import michid.script.oak.fixture._
@@ -19,7 +19,7 @@ object Main {
   def main(args: Array[String]): Unit = {
     ammonite.Main.main(Array(
       "--predef-code", predef,
-      "--banner", "Welcome to Script Oak " + version) ++
+      "--banner", "Welcome to Script Oak " + scriptOakVersion) ++
       args)
   }
 
