@@ -16,6 +16,7 @@
   <modules>
     <module>script-oak-parent</module>
     <module>script-oak-core</module>
+    <module>script-oak-core-test</module>
     <module>script-oak-fixture-reactor</module>
     <module>script-oak-shell</module>
   </modules>
