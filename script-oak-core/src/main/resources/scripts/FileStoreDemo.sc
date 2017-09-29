@@ -1,5 +1,7 @@
-import $ivy.`michid:script-oak:${project.version}`
+import $ivy.`michid:script-oak-fixtures:${project.version}`
+import ammonite.ops._
 import michid.script.oak._
+import michid.script.oak.fixture._
 
 @main
 def main(segmentStore: Path = pwd) {
