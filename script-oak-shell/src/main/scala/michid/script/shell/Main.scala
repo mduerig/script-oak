@@ -1,13 +1,13 @@
 package michid.script.shell
 
-import michid.script.oak.fixtures.{oak_1_7_7, scriptOakVersion}
+import michid.script.oak.fixtures.{oak_1_7_8, scriptOakVersion}
 
 /**
   * Main class for an interactive Scala shell including all Oak dependencies
   */
 object Main {
   // michid inject via command line args, add good default
-  private val fixture = oak_1_7_7
+  private val fixture = oak_1_7_8
 
   def main(args: Array[String]): Unit = {
     ammonite.Main.main(Array(
