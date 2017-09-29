@@ -74,6 +74,12 @@
 
   <dependencies>
     <dependency>
+      <groupId>michid</groupId>
+      <artifactId>script-oak-fixtures</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
       <groupId>com.lihaoyi</groupId>
       <artifactId>ammonite_2.12.0</artifactId>
     </dependency>

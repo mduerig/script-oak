@@ -80,6 +80,22 @@
         <artifactId>ammonite-repl_2.12.0</artifactId>
         <version>${amm.version}</version>
       </dependency>
+      <dependency>
+        <groupId>com.lihaoyi</groupId>
+        <artifactId>ammonite-compiler_2.12.0</artifactId>
+        <version>${amm.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.lihaoyi</groupId>
+        <artifactId>ammonite-util_2.12</artifactId>
+        <version>${amm.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>io.get-coursier</groupId>
+        <artifactId>coursier_2.12</artifactId>
+        <version>1.0.0-RC8</version>
+      </dependency>
 
       <!-- Oak -->
       <dependency>
