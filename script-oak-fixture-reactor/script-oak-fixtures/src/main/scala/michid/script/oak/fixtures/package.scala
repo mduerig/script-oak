@@ -16,7 +16,12 @@ package object fixtures {
     def load(): Unit
   }
 
-  val oakFixtures: List[OakFixture] = List(oak_1_7_7, oak_1_7_8)
+  val oakFixtures: Map[String, OakFixture] = Map(
+    oak_1_7_7.oakVersion -> oak_1_7_7,
+    oak_1_7_8.oakVersion -> oak_1_7_8,
+  )
+
+  val latest: OakFixture = oak_1_7_8
 
   object oak_1_7_7 extends OakFixture {
     val oakVersion = "oak-1.7.7"

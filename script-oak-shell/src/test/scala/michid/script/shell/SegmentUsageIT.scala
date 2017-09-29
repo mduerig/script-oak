@@ -7,7 +7,7 @@ import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
 class SegmentUsageIT extends FunSuite with ScriptRunner {
-  oakFixtures.foreach(oakFixture => {
+  oakFixtures.values.foreach(oakFixture => {
 
     ignore(s"Run SegmentUsage.sc script ($oakFixture)") { // michid enable
       run(oakFixture) {

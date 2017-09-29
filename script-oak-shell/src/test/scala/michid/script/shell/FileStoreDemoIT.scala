@@ -7,7 +7,7 @@ import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
 class FileStoreDemoIT extends FunSuite with ScriptRunner {
-  oakFixtures.foreach(oakFixture => {
+  oakFixtures.values.foreach(oakFixture => {
 
     test(s"Run FileStoreDemo without a repository ($oakFixture)") {
       run(oakFixture) {

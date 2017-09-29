@@ -7,7 +7,7 @@ import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
 class RunScriptIT extends FunSuite with ScriptRunner {
-  oakFixtures.foreach(oakFixture => {
+  oakFixtures.values.foreach(oakFixture => {
 
     test(s"run script ($oakFixture)") {
       run(oakFixture) {
