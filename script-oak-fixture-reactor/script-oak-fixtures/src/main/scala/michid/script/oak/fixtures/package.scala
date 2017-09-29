@@ -10,8 +10,18 @@ package object fixtures {
   val scriptOakVersion: String = Option(getClass.getPackage.getImplementationVersion)
         .getOrElse("1.3-SNAPSHOT")  // michid latest.integration equivalent?
 
-  object oak_1_7_7 {
+  trait OakFixture {
+    val oakVersion: String
+    val predef: String
+    def load(): Unit
+  }
+
+  val oakFixtures: List[OakFixture] = List(oak_1_7_7, oak_1_7_8)
+
+  object oak_1_7_7 extends OakFixture {
     val oakVersion = "oak-1.7.7"
+
+    override def toString: String = oakVersion
 
     // michid .m2 resolve should be there by default
     val predef: String = ("""
@@ -33,8 +43,10 @@ package object fixtures {
     }
   }
 
-  object oak_1_7_8 {
+  object oak_1_7_8 extends OakFixture {
     val oakVersion = "oak-1.7.8"
+
+    override def toString: String = oakVersion
 
     // michid .m2 resolve should be there by default
     val predef: String = ("""
