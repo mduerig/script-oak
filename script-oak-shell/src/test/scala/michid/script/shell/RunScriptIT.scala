@@ -17,4 +17,14 @@ class RunScriptIT extends FunSuite with ScriptRunner {
     }
   }
 
+  test("run script through interpreter") {
+    run {
+      """"println(42)".run"""
+    } {
+      case (out, err) =>
+        assert(err.isEmpty)
+        assert(out.startsWith("42"))
+    }
+  }
+
 }

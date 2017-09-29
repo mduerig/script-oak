@@ -1,6 +1,10 @@
 package michid.script
 
-import ammonite.ops.{read, resource}
+import java.io.File.createTempFile
+import java.io.PrintWriter
+
+import ammonite.interp.InterpBridge
+import ammonite.ops.{Path, read, resource}
 import ammonite.repl.ReplBridge
 import michid.script.oak.filestore.SegmentAnalyser
 import michid.script.oak.nodestore.Items.{EMPTY, Node, Property}
@@ -15,8 +19,25 @@ package object oak {
   def script(name: String): String = read! resource/'scripts/name
 
   implicit class RunScript(script: String) {
-    def run(): Unit =
-      ReplBridge.value0.load(script)
+    def run(): Unit = {
+      val repl = ReplBridge.value0
+      if (repl != null) {
+        repl.load(script)
+      } else {
+        // Spool the script to a temporary file if the repl is not accessible.
+        // I.e. when running the script directly
+        // michid the interpreter should expose a method to interpret a string
+        val interpreter = InterpBridge.value0
+        if (interpreter != null) {
+          val scriptFile = createTempFile("script", "sc")
+          scriptFile.deleteOnExit()
+          new PrintWriter(scriptFile) { write(script); close() }
+          interpreter.load.module(Path(scriptFile))
+        } else {
+          throw new Error("No interpreter for running script " + script.substring(0, 40) + " ...")
+        }
+      }
+    }
   }
 
   implicit class AsNode(node: NodeState) {
