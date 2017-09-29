@@ -1,4 +1,3 @@
-import $ivy.`michid:script-oak-fixtures:${project.version}`
 import ammonite.ops._
 import michid.script.oak._
 import michid.script.oak.fixture._

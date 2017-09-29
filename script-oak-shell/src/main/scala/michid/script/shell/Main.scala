@@ -10,7 +10,7 @@ object Main {
   // michid .m2 resolve should be there by default
   private val predef: String = ("""
       |interp.repositories() ++= Seq(coursier.MavenRepository("file://" + java.lang.System.getProperties.get("user.home") + "/.m2/repository/"))
-      |interp.load.ivy(coursier.Dependency("michid"%"script-oak-fixtures", """" + scriptOakVersion +""""))
+      |interp.load.ivy(coursier.Dependency("michid"%"script-oak-1.7.7", """" + scriptOakVersion +""""))
       |@
       |import michid.script.oak._
       |import michid.script.oak.fixture._
