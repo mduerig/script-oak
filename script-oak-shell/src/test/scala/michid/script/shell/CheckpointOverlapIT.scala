@@ -9,13 +9,13 @@ import org.scalatest.junit.JUnitRunner
 class CheckpointOverlapIT extends FunSuite with ScriptRunner {
   oakFixtures.values.foreach(oakFixture => {
 
-    ignore(s"Run CheckpointOverlap.sc script ($oakFixture)") { // michid enable
+    test(s"Run CheckpointOverlap.sc script ($oakFixture)") {
       run(oakFixture) {
         """script("CheckpointOverlap.sc").run"""
       } {
         case (out, err) =>
           assert(err.isEmpty)
-          assert(out.isEmpty)
+          assert(out == "true\n")
       }
     }
 

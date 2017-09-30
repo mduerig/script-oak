@@ -1,6 +1,5 @@
-import $ivy.`michid:script-oak:${project.version}`, michid.script.oak._
-
 import michid.script.oak._
+import michid.script.oak.fixture._
 import michid.script.oak.filestore.InMemoryIOMonitor
 import michid.script.oak.nodestore.Items._
 import org.apache.jackrabbit.oak.api.Type._
