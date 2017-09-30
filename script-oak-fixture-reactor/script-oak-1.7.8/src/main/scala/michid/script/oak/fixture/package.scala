@@ -1,5 +1,7 @@
 package michid.script.oak
 
+import java.io.Closeable
+
 import ammonite.ops.{Path, pwd}
 import michid.script.oak.filestore.FileStoreAnalyser
 import org.apache.jackrabbit.oak.plugins.blob.datastore.{DataStoreBlobStore, OakFileDataStore}
@@ -54,6 +56,11 @@ package object fixture {
       fileStoreBuilder.buildReadOnly() else
       fileStoreBuilder.build()
 
-    new FileStoreAnalyser(toolAPI)
+    new FileStoreAnalyser(toolAPI) with Closeable {
+      override def close(): Unit = {
+        super.close()
+        fileStore.close()
+      }
+    }
   }
 }

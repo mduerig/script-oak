@@ -1,7 +1,7 @@
 package michid.script.oak.filestore
 
 import java.io.Closeable
-import java.util.function.Supplier
+import java.util.Objects.requireNonNull
 import java.util.{Date, Optional, UUID}
 
 import michid.script.oak.nodestore.Changes.Change
@@ -13,6 +13,7 @@ import org.apache.jackrabbit.oak.tooling.filestore.{IOMonitor, RecordId, Segment
 import scala.collection.JavaConverters._
 
 class FileStoreAnalyser(store: Store) extends Closeable {
+  requireNonNull(store)
 
   private def nodeState(id: RecordId): NodeState = {
     store.cast(store.node(id), classOf[NodeState])

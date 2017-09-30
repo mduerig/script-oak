@@ -27,7 +27,7 @@ class FileStoreAnalyserTest extends FunSuite {
       }
     }
 
-    ignore(s"Create file store analyser ($accessMode)") {  // michid fix for read only mode
+    test(s"Create file store analyser ($accessMode)") {
       withFSA { identity }
     }
 
