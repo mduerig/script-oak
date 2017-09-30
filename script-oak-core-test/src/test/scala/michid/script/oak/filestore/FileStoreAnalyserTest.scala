@@ -86,5 +86,15 @@ class FileStoreAnalyserTest extends FunSuite {
     }
 
     // michid test with many segments
+
+    test(s"Get tars ($accessMode)") {
+      withFSA { fsa =>
+      val tars = fsa.tars
+        assert(tars != null)
+        assert(tars.size == (if (accessMode == ReadOnly) 1 else 2))
+      }
+    }
+
+    // michid test collectIOStats
   }
 }
