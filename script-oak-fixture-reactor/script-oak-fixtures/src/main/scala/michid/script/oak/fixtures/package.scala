@@ -1,6 +1,6 @@
 package michid.script.oak
 
-import java.lang.System.getProperties
+import java.lang.System.{getProperties, getProperty}
 
 import ammonite.interp.InterpBridge
 import coursier.{Dependency, Module}
@@ -8,7 +8,14 @@ import coursier.maven.MavenRepository
 
 package object fixtures {
   val scriptOakVersion: String = Option(getClass.getPackage.getImplementationVersion)
-        .getOrElse("1.3-SNAPSHOT")  // michid latest.integration equivalent?
+        .getOrElse({
+          val version = getProperty("project.version")
+          if (version == null) {
+            throw new Error("Cannot determine implementation version. " +
+                    "Use -Dproject.version to specify the implementation version.")
+          }
+          version
+        })
 
   trait OakFixture {
     val oakVersion: String
