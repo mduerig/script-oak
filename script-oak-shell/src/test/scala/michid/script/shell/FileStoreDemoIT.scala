@@ -20,7 +20,7 @@ class FileStoreDemoIT extends FunSuite with ScriptRunner {
       }
     }
 
-    ignore(s"Run FileStoreDemo with an empty repository ($oakFixture)") { // michid enable: script needs fixing
+    test(s"Run FileStoreDemo with an empty repository ($oakFixture)") {
       run(oakFixture) {
         """
           |import michid.script.oak.fixture.EmptyFileStore._
