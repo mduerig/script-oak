@@ -12,6 +12,8 @@ import org.apache.jackrabbit.oak.segment.tooling.{FileStoreWrapper, IOMonitorBri
 import org.apache.jackrabbit.oak.spi.blob.BlobStore
 import org.apache.jackrabbit.oak.tooling.filestore.Store
 
+import scala.util.Random
+
 /** Common predefs used by script-oak */
 package object fixture {
 
@@ -61,6 +63,14 @@ package object fixture {
         super.close()
         fileStore.close()
       }
+    }
+  }
+
+  object EmptyFileStore {
+    val path: Path = {
+      val path = pwd / "target" / Random.nextInt(1000000).toString / "segmentstore"
+      fileStoreAnalyser(path, readOnly = false).close()
+      path
     }
   }
 }
