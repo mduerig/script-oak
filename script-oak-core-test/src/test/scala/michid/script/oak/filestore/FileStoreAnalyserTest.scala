@@ -31,5 +31,21 @@ class FileStoreAnalyserTest extends FunSuite {
       withFSA { identity }
     }
 
+    test(s"Get root node ($accessMode)") {
+      withFSA { fsa =>
+        val node = fsa.getNode()
+        assert(node != null)
+        assert(node.exists)
+      }
+    }
+
+    test(s"Get non existing node ($accessMode)") {
+      withFSA { fsa =>
+        val node = fsa.getNode("/not/there")
+        assert(node != null)
+        assert(!node.exists)
+      }
+    }
+
   }
 }
