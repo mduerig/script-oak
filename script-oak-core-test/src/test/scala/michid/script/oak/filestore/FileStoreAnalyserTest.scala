@@ -55,5 +55,17 @@ class FileStoreAnalyserTest extends FunSuite {
       }
     }
 
+    // michid test journal with many entries
+
+    test(s"Get changes ($accessMode)") {
+      withFSA { fsa =>
+        val changes = fsa.changes()
+        assert(changes != null)
+        assert(changes.isEmpty)
+      }
+    }
+
+    // michid test changes with many entries and projection
+
   }
 }
