@@ -47,5 +47,13 @@ class FileStoreAnalyserTest extends FunSuite {
       }
     }
 
+    test(s"Get journal ($accessMode)") {
+      withFSA { fsa =>
+        val journal = fsa.journal
+        assert(journal != null)
+        assert(journal.size == 1)
+      }
+    }
+
   }
 }
