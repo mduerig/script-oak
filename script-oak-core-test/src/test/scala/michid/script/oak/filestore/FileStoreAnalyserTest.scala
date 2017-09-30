@@ -67,5 +67,24 @@ class FileStoreAnalyserTest extends FunSuite {
 
     // michid test changes with many entries and projection
 
+    test(s"Get segments ($accessMode)") {
+      withFSA { fsa =>
+        val segments = fsa.segments
+        assert(segments != null)
+        assert(segments.size == 1)
+      }
+    }
+
+    test(s"Get segment ($accessMode)") {
+      withFSA { fsa =>
+        val expected = fsa.segments.head
+        val actual =  fsa.segment(expected.id())
+        assert(expected != null)
+        assert(actual != null)
+        assert(actual.map(_.id()).contains(expected.id))
+      }
+    }
+
+    // michid test with many segments
   }
 }
