@@ -40,6 +40,7 @@
     <dependency>
       <groupId>com.lihaoyi</groupId>
       <artifactId>ammonite-ops_2.12</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.scalatest</groupId>

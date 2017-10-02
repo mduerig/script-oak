@@ -2,7 +2,7 @@ package michid.script.oak.filestore
 
 import java.io.Closeable
 import java.util.Objects.requireNonNull
-import java.util.{Date, Optional, UUID}
+import java.util.{Date, UUID}
 
 import michid.script.oak.nodestore.Changes.Change
 import michid.script.oak.nodestore.Projection.root
@@ -19,32 +19,27 @@ abstract class FileStoreAnalyser(store: Store) extends Closeable {
 
   def getNode(path: String = "/"): NodeState
 
+  def getNode(id: RecordId): NodeState = store.cast(store.node(id), classOf[NodeState])
+    .orElseThrow(() => new Error(s"Record not found $id"))
+
   def addIOMonitor(ioMonitor: IOMonitor): Closeable =
     store.addIOMonitor(ioMonitor)
 
   val journal: Stream[JournalEntry] =
     store.journalEntries().asScala.toStream.map(JournalEntry(_))
 
-  def changes(projection: Projection = root): Stream[(Stream[Change], Date)] = {
-    def nodeState(id: RecordId) = store.cast(store.node(id), classOf[NodeState])
-      .orElseThrow(() => new Error(s"Record not found $id"))
-
-    Changes(journal.map(entry => projection(nodeState(entry.rootId))), projection.path) zip journal.map(_.timestamp)
-  }
+  def changes(projection: Projection = root): Stream[(Stream[Change], Date)] =
+    Changes(journal.map(entry => projection(getNode(entry.rootId))), projection.path) zip journal.map(_.timestamp)
 
   def segment(id: UUID): Option[Segment] = {
-    asOption(store.segment(id))
+    val value = store.segment(id)
+    if (value.isPresent) Some(value.get()) else None
   }
-
-  private def asOption[T](value: Optional[T]): Option[T] =
-    if (value.isPresent) Some(value.get)
-    else None
 
   // michid pimp Segment
-  def segments: Stream[Segment] = {
+  def segments: Stream[Segment] =
     tars.flatMap(_.segmentIds().asScala)
       .flatMap(segment)
-  }
 
   // michid pimp Tar
   val tars: Stream[Tar] =
@@ -62,7 +57,7 @@ abstract class FileStoreAnalyser(store: Store) extends Closeable {
   }
 
   override def close(): Unit = store match {
-      case closeable: Closeable => closeable.close()
-      case _ =>
-    }
+    case closeable: Closeable => closeable.close()
+    case _ =>
+  }
 }

@@ -78,6 +78,14 @@ class FileStoreAnalyserTest extends FunSuite {
 
     // michid test journal with many entries
 
+    test(s"Get node by id ($accessMode)") {
+      withFSA { fsa =>
+        val id = fsa.journal.head.rootId
+        assert(id != null)
+        assert(fsa.getNode() == fsa.getNode(id))
+      }
+    }
+
     test(s"Get changes ($accessMode)") {
       withFSA { fsa =>
         val changes = fsa.changes()
