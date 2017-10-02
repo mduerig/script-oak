@@ -6,6 +6,7 @@ import ammonite.ops.{Path, pwd}
 import michid.script.oak.filestore.FileStoreAnalyser
 import michid.script.oak.nodestore.Projection
 import org.apache.jackrabbit.oak.plugins.blob.datastore.{DataStoreBlobStore, OakFileDataStore}
+import org.apache.jackrabbit.oak.plugins.memory.EmptyNodeState.MISSING_NODE
 import org.apache.jackrabbit.oak.segment.SegmentNodeState
 import org.apache.jackrabbit.oak.segment.file.FileStoreBuilder
 import org.apache.jackrabbit.oak.segment.file.FileStoreBuilder.fileStoreBuilder
@@ -62,6 +63,8 @@ package object fixture {
       fileStoreBuilder.build()
 
     new FileStoreAnalyser(toolAPI) with Closeable {
+      override protected val missingNode: NodeState = MISSING_NODE
+
       def getNode(path: String = "/"): NodeState =
         Projection(path)(fileStore.getHead)
 

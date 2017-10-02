@@ -1,8 +1,11 @@
 package michid.script.oak.filestore
 
+import java.util.UUID
+
 import ammonite.ops._
 import michid.script.oak.fixture.{EmptyFileStore, fileStoreAnalyser}
 import org.apache.jackrabbit.oak.api.Type.LONG
+import org.apache.jackrabbit.oak.tooling.filestore.RecordId
 import org.junit.runner.RunWith
 import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
@@ -83,6 +86,13 @@ class FileStoreAnalyserTest extends FunSuite {
         val id = fsa.journal.head.rootId
         assert(id != null)
         assert(fsa.getNode() == fsa.getNode(id))
+      }
+    }
+
+    test(s"Get non existing node by id ($accessMode)") {
+      withFSA { fsa =>
+        val state = fsa.getNode(new RecordId(new UUID(0, 0), 0))
+        assert(!state.exists())
       }
     }
 

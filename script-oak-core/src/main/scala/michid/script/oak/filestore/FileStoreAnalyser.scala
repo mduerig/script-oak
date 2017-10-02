@@ -8,6 +8,7 @@ import michid.script.oak.nodestore.Changes.Change
 import michid.script.oak.nodestore.Projection.root
 import michid.script.oak.nodestore.{Changes, Projection}
 import org.apache.jackrabbit.oak.spi.state.NodeState
+import org.apache.jackrabbit.oak.tooling.filestore.Node.NULL_NODE
 import org.apache.jackrabbit.oak.tooling.filestore.{IOMonitor, RecordId, Segment, Store, Tar}
 
 import scala.collection.JavaConverters._
@@ -19,8 +20,14 @@ abstract class FileStoreAnalyser(store: Store) extends Closeable {
 
   def getNode(path: String = "/"): NodeState
 
-  def getNode(id: RecordId): NodeState = store.cast(store.node(id), classOf[NodeState])
-    .orElseThrow(() => new Error(s"Record not found $id"))
+  protected val missingNode: NodeState
+
+  def getNode(id: RecordId): NodeState = {
+    val node = store.node(id)
+    if (node == NULL_NODE) missingNode
+    else store.cast(node, classOf[NodeState])
+      .orElse(missingNode)
+  }
 
   def addIOMonitor(ioMonitor: IOMonitor): Closeable =
     store.addIOMonitor(ioMonitor)
