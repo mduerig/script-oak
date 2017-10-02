@@ -12,27 +12,25 @@ import org.apache.jackrabbit.oak.tooling.filestore.{IOMonitor, RecordId, Segment
 
 import scala.collection.JavaConverters._
 
-class FileStoreAnalyser(store: Store) extends Closeable {
+abstract class FileStoreAnalyser(store: Store) extends Closeable {
   requireNonNull(store)
 
-  private def nodeState(id: RecordId): NodeState = {
-    store.cast(store.node(id), classOf[NodeState])
-      .orElseThrow(() => new Error(s"Record not found $id"))
-  }
+  def setHead(expected: NodeState, head: NodeState): Boolean
+
+  def getNode(path: String = "/"): NodeState
 
   def addIOMonitor(ioMonitor: IOMonitor): Closeable =
     store.addIOMonitor(ioMonitor)
 
-  // michid wrap
-  def getNode(path: String = "/"): NodeState =
-    Projection(path)(nodeState(journal.head.rootId))
-
   val journal: Stream[JournalEntry] =
     store.journalEntries().asScala.toStream.map(JournalEntry(_))
 
-  // michid wrap
-  def changes(projection: Projection = root): Stream[(Stream[Change], Date)] =
+  def changes(projection: Projection = root): Stream[(Stream[Change], Date)] = {
+    def nodeState(id: RecordId) = store.cast(store.node(id), classOf[NodeState])
+      .orElseThrow(() => new Error(s"Record not found $id"))
+
     Changes(journal.map(entry => projection(nodeState(entry.rootId))), projection.path) zip journal.map(_.timestamp)
+  }
 
   def segment(id: UUID): Option[Segment] = {
     asOption(store.segment(id))
@@ -42,13 +40,13 @@ class FileStoreAnalyser(store: Store) extends Closeable {
     if (value.isPresent) Some(value.get)
     else None
 
-  // michid wrap Segment
+  // michid pimp Segment
   def segments: Stream[Segment] = {
     tars.flatMap(_.segmentIds().asScala)
       .flatMap(segment)
   }
 
-  // michid wrap Tar
+  // michid pimp Tar
   val tars: Stream[Tar] =
     store.tars().asScala.toStream
 

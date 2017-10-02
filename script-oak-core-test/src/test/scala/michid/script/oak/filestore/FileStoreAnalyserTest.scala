@@ -1,10 +1,11 @@
 package michid.script.oak.filestore
 
+import ammonite.ops._
 import michid.script.oak.fixture.{EmptyFileStore, fileStoreAnalyser}
+import org.apache.jackrabbit.oak.api.Type.LONG
 import org.junit.runner.RunWith
 import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
-import ammonite.ops._
 
 @RunWith(classOf[JUnitRunner])
 class FileStoreAnalyserTest extends FunSuite {
@@ -44,6 +45,26 @@ class FileStoreAnalyserTest extends FunSuite {
         val node = fsa.getNode("/not/there")
         assert(node != null)
         assert(!node.exists)
+      }
+    }
+
+    test(s"Set head ($accessMode)") {
+      withFSA { fsa =>
+        val initialHead = fsa.getNode()
+        assert(initialHead.getProperty("s") == null)
+        val builder = initialHead.builder()
+        builder.setProperty("s", 42)
+        if (accessMode == ReadWrite) {
+          assert(fsa.setHead(initialHead, builder.getNodeState))
+          val property = fsa.getNode().getProperty("s")
+          assert(property != null)
+          assert(property.getValue(LONG) == 42)
+        } else try {
+            fsa.setHead(initialHead, builder.getNodeState)
+            fail()
+        } catch {
+          case _: UnsupportedOperationException =>
+        }
       }
     }
 

@@ -4,12 +4,15 @@ import java.io.Closeable
 
 import ammonite.ops.{Path, pwd}
 import michid.script.oak.filestore.FileStoreAnalyser
+import michid.script.oak.nodestore.Projection
 import org.apache.jackrabbit.oak.plugins.blob.datastore.{DataStoreBlobStore, OakFileDataStore}
+import org.apache.jackrabbit.oak.segment.SegmentNodeState
 import org.apache.jackrabbit.oak.segment.file.FileStoreBuilder
 import org.apache.jackrabbit.oak.segment.file.FileStoreBuilder.fileStoreBuilder
 import org.apache.jackrabbit.oak.segment.file.tooling.BasicReadOnlyBlobStore
 import org.apache.jackrabbit.oak.segment.tooling.{FileStoreWrapper, IOMonitorBridge}
 import org.apache.jackrabbit.oak.spi.blob.BlobStore
+import org.apache.jackrabbit.oak.spi.state.NodeState
 import org.apache.jackrabbit.oak.tooling.filestore.Store
 
 import scala.util.Random
@@ -59,6 +62,20 @@ package object fixture {
       fileStoreBuilder.build()
 
     new FileStoreAnalyser(toolAPI) with Closeable {
+      def getNode(path: String = "/"): NodeState =
+        Projection(path)(fileStore.getHead)
+
+      def setHead(expected: NodeState, head: NodeState): Boolean = {
+        if (readOnly) throw new UnsupportedOperationException("Cannot set head of read only store")
+
+        def recordId(node: NodeState) = node match {
+          case sns: SegmentNodeState => sns.getRecordId
+          case _ => throw new Error(s"No record id for node $node")
+        }
+
+        fileStore.getRevisions.setHead(recordId(expected), recordId(head))
+      }
+
       override def close(): Unit = {
         super.close()
         fileStore.close()
@@ -67,7 +84,7 @@ package object fixture {
   }
 
   object EmptyFileStore {
-    val path: Path = {
+    def path: Path = {
       val path = pwd / "target" / Random.nextInt(1000000).toString / "segmentstore"
       plainFileStoreBuilder(path).build().close()
       path
