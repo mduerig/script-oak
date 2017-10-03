@@ -7,7 +7,7 @@ def main(segmentStore: Path = pwd) {
   val segmentStoreDir = segmentStore/"segmentstore"
   val dataStoreDir = segmentStore/"datastore"
   println(s"Opening segment store at $segmentStoreDir, data store at $dataStoreDir")
-  implicit val fs = fileStoreAnalyser(segmentStoreDir, dataStoreDir)
+  val fs = fileStoreAnalyser(segmentStoreDir, dataStoreDir)
   val superRoot = fs.getNode().analyse
   println(s"superRoot=$superRoot")
 

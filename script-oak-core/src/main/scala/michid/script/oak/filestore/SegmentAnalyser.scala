@@ -17,7 +17,7 @@ class SegmentAnalyser(val segment: Segment) {
   def records: Stream[Record] =
     segment.records.asScala.toStream
 
-  def references(implicit fileStoreAnalyser: FileStoreAnalyser): Stream[UUID] = {
+  def references: Stream[UUID] = {
     segment.references.asScala.toStream
   }
 
