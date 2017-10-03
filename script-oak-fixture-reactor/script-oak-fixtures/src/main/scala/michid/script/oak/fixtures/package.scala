@@ -1,10 +1,8 @@
 package michid.script.oak
 
-import java.lang.System.{getProperties, getProperty}
+import java.lang.System.getProperty
 
-import ammonite.interp.InterpBridge
-import coursier.{Dependency, Module}
-import coursier.maven.MavenRepository
+import ammonite.repl.ReplBridge
 
 package object fixtures {
   val scriptOakVersion: String = Option(getClass.getPackage.getImplementationVersion)
@@ -20,7 +18,15 @@ package object fixtures {
   trait OakFixture {
     val oakVersion: String
     val predef: String
-    def load(): Unit
+
+    def load(): Unit = {
+      val repl = ReplBridge.value0
+      if (repl != null) {
+        repl.load.apply(predef)
+      } else {
+        throw new Error(s"Error loading fixture $oakVersion. No interpreter")
+      }
+    }
   }
 
   val oakFixtures: Map[String, OakFixture] = Map(
@@ -43,16 +49,6 @@ package object fixtures {
       |import michid.script.oak._
       |import michid.script.oak.fixture._
     |""").stripMargin
-
-    def load(): Unit = {
-      val interpreter = InterpBridge.value0
-      if (interpreter != null) {
-        interpreter.repositories() ++= Seq(MavenRepository("file://" + getProperties.get("user.home") + "/.m2/repository/"))
-        interpreter.load.ivy(Dependency(Module("michid", s"script-$oakVersion"), scriptOakVersion))
-      } else {
-        throw new Error("No interpreter")
-      }
-    }
   }
 
   object oak_1_7_8 extends OakFixture {
@@ -68,16 +64,6 @@ package object fixtures {
       |import michid.script.oak._
       |import michid.script.oak.fixture._
     |""").stripMargin
-
-    def load(): Unit = {
-      val interpreter = InterpBridge.value0
-      if (interpreter != null) {
-        interpreter.repositories() ++= Seq(MavenRepository("file://" + getProperties.get("user.home") + "/.m2/repository/"))
-        interpreter.load.ivy(Dependency(Module("michid", s"script-$oakVersion"), scriptOakVersion))
-      } else {
-        throw new Error("No interpreter")
-      }
-    }
   }
 
 }
