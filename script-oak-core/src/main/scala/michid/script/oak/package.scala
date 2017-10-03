@@ -34,7 +34,7 @@ package object oak {
           new PrintWriter(scriptFile) { write(script); close() }
           interpreter.load.module(Path(scriptFile))
         } else {
-          throw new Error("No interpreter for running script " + script.substring(0, 40) + " ...")
+          throw new Error(s"No interpreter for running script ${script.substring(0, 40)} ...")
         }
       }
     }
