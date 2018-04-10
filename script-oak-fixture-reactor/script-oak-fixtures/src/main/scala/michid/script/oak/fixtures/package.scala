@@ -30,29 +30,13 @@ package object fixtures {
   }
 
   val oakFixtures: Map[String, OakFixture] = Map(
-    oak_1_7_7.oakVersion -> oak_1_7_7,
-    oak_1_7_8.oakVersion -> oak_1_7_8,
+    oak_1_10.oakVersion -> oak_1_10,
   )
 
-  val latest: OakFixture = oak_1_7_8
+  val latest: OakFixture = oak_1_10
 
-  object oak_1_7_7 extends OakFixture {
-    val oakVersion = "oak-1.7.7"
-
-    override def toString: String = oakVersion
-
-    // michid .m2 resolve should be there by default
-    val predef: String = ("""
-      |interp.repositories() ++= Seq(coursier.MavenRepository("file://" + java.lang.System.getProperties.get("user.home") + "/.m2/repository/"))
-      |interp.load.ivy(coursier.Dependency("michid"%"script-""" + oakVersion + """", """" + scriptOakVersion + """"))
-      |@
-      |import michid.script.oak._
-      |import michid.script.oak.fixture._
-    |""").stripMargin
-  }
-
-  object oak_1_7_8 extends OakFixture {
-    val oakVersion = "oak-1.7.8"
+  object oak_1_10 extends OakFixture {
+    val oakVersion = "oak-1.10"
 
     override def toString: String = oakVersion
 

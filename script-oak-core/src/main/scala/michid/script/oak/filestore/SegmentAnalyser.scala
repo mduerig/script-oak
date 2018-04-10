@@ -2,7 +2,7 @@ package michid.script.oak.filestore
 
 import java.util.UUID
 
-import org.apache.jackrabbit.oak.tooling.filestore.{Record, Segment}
+import org.apache.jackrabbit.oak.tooling.filestore.api.{Record, Segment}
 
 import scala.collection.JavaConverters._
 
@@ -19,12 +19,13 @@ class SegmentAnalyser(val segment: Segment) {
 
   def references: Stream[UUID] = {
     segment.references.asScala.toStream
+        .map(_.id())
   }
 
   override def toString: String = {
     val compacted = if (segment.metaData.compacted) "compacted" else ""
 
-    s"${segment.id()} (${segment.size()} bytes): " +
+    s"${segment.id()} (${segment.length()} bytes): " +
     s"Version: ${segment.metaData.version}, " +
     s"Generation: ${segment.metaData.generation} / ${segment.metaData.fullGeneration()} / $compacted"
   }

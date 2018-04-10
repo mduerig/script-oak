@@ -10,7 +10,7 @@ import michid.script.oak.filestore.SegmentAnalyser
 import michid.script.oak.nodestore.Items.{EMPTY, Node, Property}
 import org.apache.jackrabbit.oak.api.PropertyState
 import org.apache.jackrabbit.oak.spi.state.NodeState
-import org.apache.jackrabbit.oak.tooling.filestore.Segment
+import org.apache.jackrabbit.oak.tooling.filestore.api.Segment
 
 /** Common predefs used by script-oak */
 package object oak {

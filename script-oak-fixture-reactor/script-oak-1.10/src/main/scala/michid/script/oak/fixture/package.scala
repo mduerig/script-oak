@@ -7,14 +7,13 @@ import michid.script.oak.filestore.FileStoreAnalyser
 import michid.script.oak.nodestore.Projection
 import org.apache.jackrabbit.oak.plugins.blob.datastore.{DataStoreBlobStore, OakFileDataStore}
 import org.apache.jackrabbit.oak.plugins.memory.EmptyNodeState.MISSING_NODE
-import org.apache.jackrabbit.oak.segment.SegmentNodeState
 import org.apache.jackrabbit.oak.segment.file.FileStoreBuilder
 import org.apache.jackrabbit.oak.segment.file.FileStoreBuilder.fileStoreBuilder
-import org.apache.jackrabbit.oak.segment.file.tooling.BasicReadOnlyBlobStore
-import org.apache.jackrabbit.oak.segment.tooling.{FileStoreWrapper, IOMonitorBridge}
+import org.apache.jackrabbit.oak.segment.file.proc.Proc
 import org.apache.jackrabbit.oak.spi.blob.BlobStore
 import org.apache.jackrabbit.oak.spi.state.NodeState
-import org.apache.jackrabbit.oak.tooling.filestore.Store
+import org.apache.jackrabbit.oak.tooling.filestore.api.SegmentStore
+import org.apache.jackrabbit.oak.tooling.filestore.bindings.nodestate.NodeStateBackedSegmentStore
 
 import scala.util.Random
 
@@ -53,31 +52,19 @@ package object fixture {
     if (dataStoreDirectory.toIO.exists())
       fileStoreBuilder.withBlobStore(newBlobStore(dataStoreDirectory))
 
-    val iOMonitor = new IOMonitorBridge
-    var toolAPI: Store = null
-    fileStoreBuilder.withProbes((fileStoreProbe, tarProbe) =>
-      toolAPI = new FileStoreWrapper(fileStoreProbe, tarProbe, iOMonitor.addIOMonitor(_)))
+// michid     val iOMonitor = new IOMonitorBridge
 
     val fileStore = if (readOnly)
       fileStoreBuilder.buildReadOnly() else
       fileStoreBuilder.build()
 
-    new FileStoreAnalyser(toolAPI) with Closeable {
+    val store = NodeStateBackedSegmentStore.newSegmentStore(
+      Proc.of(fileStoreBuilder.buildProcBackend(fileStore)))
+    new FileStoreAnalyser(store) with Closeable {
       override protected val missingNode: NodeState = MISSING_NODE
 
       def getNode(path: String = "/"): NodeState =
         Projection(path)(fileStore.getHead)
-
-      def setHead(expected: NodeState, head: NodeState): Boolean = {
-        if (readOnly) throw new UnsupportedOperationException("Cannot set head of read only store")
-
-        def recordId(node: NodeState) = node match {
-          case sns: SegmentNodeState => sns.getRecordId
-          case _ => throw new Error(s"No record id for node $node")
-        }
-
-        fileStore.getRevisions.setHead(recordId(expected), recordId(head))
-      }
 
       override def close(): Unit = {
         super.close()

@@ -16,7 +16,7 @@
   <name>Script Oak Core Test</name>
 
   <properties>
-    <oak.version>1.7.7</oak.version>
+    <oak.version>1.10-SNAPSHOT</oak.version>
   </properties>
 
   <build>
@@ -54,7 +54,7 @@
     </dependency>
     <dependency>
       <groupId>michid</groupId>
-      <artifactId>script-oak-1.7.8</artifactId>
+      <artifactId>script-oak-1.10</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
