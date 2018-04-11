@@ -27,10 +27,6 @@ abstract class FileStoreAnalyser(store: SegmentStore) extends Closeable {
 //      .orElse(missingNode)
 //  }
 
-// michid
-//  def addIOMonitor(ioMonitor: IOMonitor): Closeable =
-//    store.addIOMonitor(ioMonitor)
-
   val journal: Stream[JournalEntry] =
     store.journalEntries.asScala.toStream
 
@@ -55,18 +51,6 @@ abstract class FileStoreAnalyser(store: SegmentStore) extends Closeable {
 
   def segments: Stream[Segment] =
     tars.flatMap(_.segments.asScala)
-
-// michid
-//  def collectIOStats[T <: IOMonitor](ioMonitor: => T)(thunk: => Unit): T = {
-//    val monitor: T = ioMonitor
-//    val closer = addIOMonitor(monitor)
-//    try {
-//      thunk
-//      monitor
-//    } finally {
-//        closer.close()
-//    }
-//  }
 
   override def close(): Unit = store match {
     case closeable: Closeable => closeable.close()

@@ -52,8 +52,6 @@ package object fixture {
     if (dataStoreDirectory.toIO.exists())
       fileStoreBuilder.withBlobStore(newBlobStore(dataStoreDirectory))
 
-// michid     val iOMonitor = new IOMonitorBridge
-
     val fileStore = if (readOnly)
       fileStoreBuilder.buildReadOnly() else
       fileStoreBuilder.build()
