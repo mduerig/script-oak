@@ -11,12 +11,23 @@ object Main {
     var fixture = latest
     var ammArgs = args
 
-    if (args.length > 1) {
+    if (args.length == 1) {
+      if (args(0) == "--help") {
+        println(s"--oak-version [${oakFixtures.values.mkString("|")}]: " +
+                "set Oak version")
+        println(s"--amm-predef [${oakFixtures.values.mkString("|")}]: " +
+                "print code predef Ammonite standalone usage of Script Oak")
+        sys.exit(0)
+      }
+    } else if (args.length > 1) {
+      fixture = oakFixtures.getOrElse(args(1), {
+        throw new Error(s"No such version ${args(1)}")
+      })
       if (args(0) == "--oak-version") {
-        fixture = oakFixtures.getOrElse(args(1), {
-          throw new Error(s"No such version ${args(1)}")
-        })
         ammArgs = args.drop(2)
+      } else if (args(0) == "--amm-predef") {
+        println(s"${fixture.predef}")
+        sys.exit(0)
       }
     }
 
