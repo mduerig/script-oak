@@ -61,9 +61,6 @@ package object fixture {
     new FileStoreAnalyser(store) with Closeable {
       override protected val missingNode: NodeState = MISSING_NODE
 
-      def getNode(path: String = "/"): NodeState =
-        Projection(path)(fileStore.getHead)
-
       override def close(): Unit = {
         super.close()
         fileStore.close()

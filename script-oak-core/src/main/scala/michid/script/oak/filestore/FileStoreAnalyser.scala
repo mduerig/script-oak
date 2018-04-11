@@ -15,17 +15,19 @@ import scala.collection.JavaConverters._
 abstract class FileStoreAnalyser(store: SegmentStore) extends Closeable {
   requireNonNull(store)
 
-  def getNode(path: String = "/"): NodeState
+  def getNode(path: String = "/"): NodeState = {
+    val head = store.head()
+    if (head.isPresent) Projection(path)(head.get())
+    else missingNode
+  }
 
   protected val missingNode: NodeState
 
-// michid
-//  def getNode(id: RecordId): NodeState = {
-//    val node = store.node(id)
-//    if (node == NULL_NODE) missingNode
-//    else store.cast(node, classOf[NodeState])
-//      .orElse(missingNode)
-//  }
+  def getNode(segmentId: UUID, recordNumber: Int): NodeState = {
+    val node = store.node(segmentId, recordNumber)
+    if (node.isPresent) node.get()
+    else missingNode
+  }
 
   val journal: Stream[JournalEntry] =
     store.journalEntries.asScala.toStream

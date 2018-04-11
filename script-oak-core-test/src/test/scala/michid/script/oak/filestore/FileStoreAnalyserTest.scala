@@ -1,5 +1,7 @@
 package michid.script.oak.filestore
 
+import java.util.UUID
+
 import ammonite.ops._
 import michid.script.oak.fixture.{EmptyFileStore, fileStoreAnalyser}
 import org.junit.runner.RunWith
@@ -59,19 +61,20 @@ class FileStoreAnalyserTest extends FunSuite {
 
     test(s"Get node by id ($accessMode)") {
       withFSA { fsa =>
-        val id = fsa.journal.head.segmentId()
-        assert(id != null)
-// michid         assert(fsa.getNode() == fsa.getNode(id))
+        val headRevision = fsa.journal.head
+        assert(headRevision != null)
+        val segmentId = headRevision.segmentId();
+        val recordNumber = headRevision.offset();
+        assert(fsa.getNode() == fsa.getNode(segmentId, recordNumber))
       }
     }
 
-// michid
-//    test(s"Get non existing node by id ($accessMode)") {
-//      withFSA { fsa =>
-//        val state = fsa.getNode(new RecordId(new UUID(0, 0), 0))
-//        assert(!state.exists())
-//      }
-//    }
+    test(s"Get non existing node by id ($accessMode)") {
+      withFSA { fsa =>
+        val state = fsa.getNode(new UUID(0, 0), 0)
+        assert(!state.exists())
+      }
+    }
 
     test(s"Get changes ($accessMode)") {
       withFSA { fsa =>
@@ -110,7 +113,5 @@ class FileStoreAnalyserTest extends FunSuite {
         assert(tars.nonEmpty)
       }
     }
-
-    // michid test collectIOStats
   }
 }
