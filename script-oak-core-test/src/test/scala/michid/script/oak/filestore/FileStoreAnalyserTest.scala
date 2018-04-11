@@ -128,7 +128,7 @@ class FileStoreAnalyserTest extends FunSuite {
 
     test(s"node analyser for non existing node ($accessMode)") {
       import michid.script.oak._
-      withFSA { fsa =>
+      withFSA { _ =>
         val node = None
         val nodeAnalyser = node.analyse
         assert(nodeAnalyser == Items.EMPTY)

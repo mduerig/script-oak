@@ -4,15 +4,11 @@ import java.io.Closeable
 
 import ammonite.ops.{Path, pwd}
 import michid.script.oak.filestore.FileStoreAnalyser
-import michid.script.oak.nodestore.Projection
 import org.apache.jackrabbit.oak.plugins.blob.datastore.{DataStoreBlobStore, OakFileDataStore}
-import org.apache.jackrabbit.oak.plugins.memory.EmptyNodeState.MISSING_NODE
 import org.apache.jackrabbit.oak.segment.file.FileStoreBuilder
 import org.apache.jackrabbit.oak.segment.file.FileStoreBuilder.fileStoreBuilder
 import org.apache.jackrabbit.oak.segment.file.proc.Proc
 import org.apache.jackrabbit.oak.spi.blob.BlobStore
-import org.apache.jackrabbit.oak.spi.state.NodeState
-import org.apache.jackrabbit.oak.tooling.filestore.api.SegmentStore
 import org.apache.jackrabbit.oak.tooling.filestore.bindings.nodestate.NodeStateBackedSegmentStore
 
 import scala.util.Random

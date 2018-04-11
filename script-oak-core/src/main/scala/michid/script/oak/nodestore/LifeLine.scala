@@ -88,7 +88,7 @@ class LifeLine (
     */
   def lifeTimes: Iterable[Long] = {
     byPath.values filter
-      (_.size > 1) map { changes =>            // For each set of changes of size at least 2
+      (_.lengthCompare(1) > 0) map { changes =>            // For each set of changes of size at least 2
         (changes map { _._2.getTime})          // extract time stamp
           .sorted(Ordering[Long].reverse)      // order reverse chronological
     } flatMap (ts =>                           // Combine list of
