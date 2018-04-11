@@ -63,8 +63,8 @@ class FileStoreAnalyserTest extends FunSuite {
       withFSA { fsa =>
         val headRevision = fsa.journal.head
         assert(headRevision != null)
-        val segmentId = headRevision.segmentId();
-        val recordNumber = headRevision.offset();
+        val segmentId = headRevision.segmentId
+        val recordNumber = headRevision.recordNumber
         assert(fsa.getNode() == fsa.getNode(segmentId, recordNumber))
       }
     }
