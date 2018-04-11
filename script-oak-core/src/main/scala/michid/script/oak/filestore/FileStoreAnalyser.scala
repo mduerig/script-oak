@@ -2,7 +2,7 @@ package michid.script.oak.filestore
 
 import java.io.Closeable
 import java.util.Objects.requireNonNull
-import java.util.UUID
+import java.util.{Optional, UUID}
 
 import michid.script.oak.nodestore.Changes.Change
 import michid.script.oak.nodestore.Projection.root
@@ -15,22 +15,24 @@ import scala.collection.JavaConverters._
 abstract class FileStoreAnalyser(store: SegmentStore) extends Closeable {
   requireNonNull(store)
 
-  def getNode(path: String = "/"): NodeState = {
-    val head = store.head()
-    if (head.isPresent) Projection(path)(head.get())
-    else missingNode
+  implicit class AsOption[A](optional: Optional[A]) {
+    def asScala: Option[A] = {
+      if (optional.isPresent) Some(optional.get)
+      else None
+    }
   }
 
-  protected val missingNode: NodeState
-
-  def getNode(segmentId: UUID, recordNumber: Int): NodeState = {
-    val node = store.node(segmentId, recordNumber)
-    if (node.isPresent) node.get()
-    else missingNode
+  def getNode(path: String = "/"): Option[NodeState] = {
+    store.head.asScala.map(Projection(path).apply)
   }
 
-  val journal: Stream[JournalEntry] =
+  def getNode(segmentId: UUID, recordNumber: Int): Option[NodeState] = {
+    store.node(segmentId, recordNumber).asScala
+  }
+
+  val journal: Stream[JournalEntry] = {
     store.journalEntries.asScala.toStream
+  }
 
   def changes(projection: Projection = root): Stream[(Stream[Change], Long)] = {
     val states = journal
@@ -43,16 +45,16 @@ abstract class FileStoreAnalyser(store: SegmentStore) extends Closeable {
   }
 
   def segment(id: UUID): Option[Segment] = {
-    val value = store.segment(id)
-    if (value.isPresent) Some(value.get())
-    else None
+    store.segment(id).asScala
   }
 
-  val tars: Stream[Tar] =
+  val tars: Stream[Tar] = {
     store.tars.asScala.toStream
+  }
 
-  def segments: Stream[Segment] =
+  def segments: Stream[Segment] = {
     tars.flatMap(_.segments.asScala)
+  }
 
   override def close(): Unit = store match {
     case closeable: Closeable => closeable.close()

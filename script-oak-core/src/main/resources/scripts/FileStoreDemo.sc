@@ -11,7 +11,7 @@ def main(segmentStore: Path = pwd) {
   val superRoot = fs.getNode().analyse
   println(s"superRoot=$superRoot")
 
-  val rootNode = fs.getNode("root");
+  val rootNode = fs.getNode("root").get
   println(s"superNode=$rootNode")
 
   // Analysing the items in this file store
@@ -22,7 +22,7 @@ def main(segmentStore: Path = pwd) {
   println(s"nodes=${nodes take 10}")
 
   // Find all nodes with 2 child nodes
-  val binaryNodes = nodes.filter(_.nodes.size == 2)
+  val binaryNodes = nodes.filter(_.nodes.lengthCompare(2) == 0)
   println(s"binaryNodes=${binaryNodes take 10}")
 
   // Group properties by number of values
@@ -37,11 +37,11 @@ def main(segmentStore: Path = pwd) {
   // Number values per value type
   val values = collectValues(fs.getNode("root").analyse)
   val valuesPerType = values.groupBy(_.tyqe).mapValues(_.size)
-  println(s"valuesPerType=${valuesPerType}")
+  println(s"valuesPerType=$valuesPerType")
 
   // Number of bytes per value type
   val bytesPerValue = values.groupBy(_.tyqe).mapValues(_.map(v => v.parent.state.size(v.index)).sum)
-  println(s"bytesPerValue=${bytesPerValue}")
+  println(s"bytesPerValue=$bytesPerValue")
 
   // Checkpoints ordered by creation time
   import org.apache.jackrabbit.oak.api.Type._

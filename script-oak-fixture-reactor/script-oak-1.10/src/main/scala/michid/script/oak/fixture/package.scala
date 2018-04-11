@@ -59,8 +59,6 @@ package object fixture {
     val store = NodeStateBackedSegmentStore.newSegmentStore(
       Proc.of(fileStoreBuilder.buildProcBackend(fileStore)))
     new FileStoreAnalyser(store) with Closeable {
-      override protected val missingNode: NodeState = MISSING_NODE
-
       override def close(): Unit = {
         super.close()
         fileStore.close()

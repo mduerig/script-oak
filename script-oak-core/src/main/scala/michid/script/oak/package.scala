@@ -7,6 +7,7 @@ import ammonite.interp.InterpBridge
 import ammonite.ops.{Path, read, resource}
 import ammonite.repl.ReplBridge
 import michid.script.oak.filestore.SegmentAnalyser
+import michid.script.oak.nodestore.Items
 import michid.script.oak.nodestore.Items.{EMPTY, Node, Property}
 import org.apache.jackrabbit.oak.api.PropertyState
 import org.apache.jackrabbit.oak.spi.state.NodeState
@@ -40,16 +41,23 @@ package object oak {
     }
   }
 
-  implicit class AsNode(node: NodeState) {
-    def analyse = new Node(node)
+  implicit class OptionStateAsNode(node: Option[NodeState]) {
+    def analyse: Node = {
+      if (node.isDefined) new Node(node.get)
+      else Items.EMPTY
+    }
   }
 
-  implicit class AsProperty(property: PropertyState) {
-    def analyse = Property(EMPTY, property)
+  implicit class StateAsNode(node: NodeState) {
+    def analyse: Node = new Node(node)
   }
 
-  implicit class AsSegmentAnalyser(segment: Segment) {
-    def analyse = new SegmentAnalyser(segment)
+  implicit class StateAsProperty(property: PropertyState) {
+    def analyse: Property = Property(EMPTY, property)
+  }
+
+  implicit class SegmentAsSegmentAnalyser(segment: Segment) {
+    def analyse: SegmentAnalyser = new SegmentAnalyser(segment)
   }
 
 }

@@ -4,6 +4,7 @@ import java.util.UUID
 
 import ammonite.ops._
 import michid.script.oak.fixture.{EmptyFileStore, fileStoreAnalyser}
+import michid.script.oak.nodestore.Items
 import org.junit.runner.RunWith
 import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
@@ -37,7 +38,7 @@ class FileStoreAnalyserTest extends FunSuite {
       withFSA { fsa =>
         val node = fsa.getNode()
         assert(node != null)
-        assert(node.exists)
+        assert(node.isDefined)
       }
     }
 
@@ -45,7 +46,8 @@ class FileStoreAnalyserTest extends FunSuite {
       withFSA { fsa =>
         val node = fsa.getNode("/not/there")
         assert(node != null)
-        assert(!node.exists)
+        assert(node.isDefined)
+        assert(!node.get.exists())
       }
     }
 
@@ -72,7 +74,7 @@ class FileStoreAnalyserTest extends FunSuite {
     test(s"Get non existing node by id ($accessMode)") {
       withFSA { fsa =>
         val state = fsa.getNode(new UUID(0, 0), 0)
-        assert(!state.exists())
+        assert(state.isEmpty)
       }
     }
 
@@ -113,5 +115,44 @@ class FileStoreAnalyserTest extends FunSuite {
         assert(tars.nonEmpty)
       }
     }
+
+
+    test(s"node analyser ($accessMode)") {
+      import michid.script.oak._
+      withFSA { fsa =>
+        val node = fsa.getNode()
+        val nodeAnalyser = node.analyse
+        assert(node.contains(nodeAnalyser.state))
+      }
+    }
+
+    test(s"node analyser for non existing node ($accessMode)") {
+      import michid.script.oak._
+      withFSA { fsa =>
+        val node = None
+        val nodeAnalyser = node.analyse
+        assert(nodeAnalyser == Items.EMPTY)
+      }
+    }
+
+    test(s"segment analyser ($accessMode)") {
+      import michid.script.oak._
+      withFSA { fsa =>
+        val segment = fsa.segments.head
+        val segmentAnalyser = segment.analyse
+        assert(segment == segmentAnalyser.segment)
+      }
+    }
+
+    test(s"property analyser ($accessMode)") {
+      import michid.script.oak._
+      withFSA { fsa =>
+        val node = fsa.getNode().analyse
+        val propertyAnalyser = michid.script.oak.nodestore.Items.collectProperties(node).headOption
+        val property = propertyAnalyser.map(_.state)
+        assert(property == propertyAnalyser)
+      }
+    }
+
   }
 }
