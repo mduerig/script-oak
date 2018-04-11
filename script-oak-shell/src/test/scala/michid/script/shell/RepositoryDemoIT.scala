@@ -9,7 +9,7 @@ import org.scalatest.junit.JUnitRunner
 class RepositoryDemoIT extends FunSuite with ScriptRunner {
   oakFixtures.values.foreach(oakFixture => {
 
-    ignore(s"Run RepositoryDemo ($oakFixture)") { // michid enable
+    test(s"Run RepositoryDemo ($oakFixture)") {
       run(oakFixture) {
         """script("RepositoryDemo.sc").run """
       } {
