@@ -30,7 +30,7 @@ package object fixtures {
   }
 
   val oakFixtures: Map[String, OakFixture] = Map(
-    oak_1_10.oakVersion -> oak_1_10,
+    oak_1_10.oakVersion -> oak_1_10
   )
 
   val latest: OakFixture = oak_1_10

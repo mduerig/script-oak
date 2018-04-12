@@ -39,12 +39,12 @@
     <!-- Test -->
     <dependency>
       <groupId>com.lihaoyi</groupId>
-      <artifactId>ammonite-ops_2.12</artifactId>
+      <artifactId>ammonite-ops_2.11</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.scalatest</groupId>
-      <artifactId>scalatest_2.12</artifactId>
+      <artifactId>scalatest_2.11</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>

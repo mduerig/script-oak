@@ -1,5 +1,5 @@
 import $ivy.`org.aicer.grok:grok:0.9.0`
-import $ivy.`log4j:log4j:1.2.12`
+import $ivy.`log4j:log4j:1.2.11`
 
 import org.aicer.grok.dictionary.GrokDictionary
 import scala.collection.JavaConverters._
