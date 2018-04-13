@@ -37,7 +37,7 @@ object Changes {
   }
 
   /** Catamorphism over content diff */
-  def apply(before: NodeState, after: NodeState, path: String = ""): Stream[Change] = {
+  def apply(after: NodeState, before: NodeState, path: String = ""): Stream[Change] = {
     var changes = new ListBuffer[Stream[Change]]
 
     after.compareAgainstBaseState(before, new NodeStateDiff {
@@ -73,6 +73,10 @@ object Changes {
     changes.foldRight(Stream.empty[Change])(_ #::: _)
   }
 
+  /**
+   * Calculate the changes (diffs) between each node state in `nodes` against
+   * its predecessor.
+   */
   def apply(nodes: Iterable[NodeState], path: String): Stream[Stream[Change]] = {
     if (nodes.take(2).size < 2) Stream.empty
     else nodes.sliding(2).map(states => {
