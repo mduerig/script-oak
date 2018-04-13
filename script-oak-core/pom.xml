@@ -7,12 +7,12 @@
 
   <parent>
     <groupId>michid</groupId>
-    <artifactId>script-oak-parent</artifactId>
+    <artifactId>script-oak-parent_2.12</artifactId>
     <version>1.3-SNAPSHOT</version>
     <relativePath>../script-oak-parent/pom.xml</relativePath>
   </parent>
 
-  <artifactId>script-oak-core</artifactId>
+  <artifactId>script-oak-core_2.12</artifactId>
   <name>Script Oak Core</name>
 
   <build>

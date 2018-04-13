@@ -4,12 +4,12 @@
 
   <parent>
     <groupId>michid</groupId>
-    <artifactId>script-oak-parent</artifactId>
+    <artifactId>script-oak-parent_2.12</artifactId>
     <version>1.3-SNAPSHOT</version>
     <relativePath>../script-oak-parent/pom.xml</relativePath>
   </parent>
 
-  <artifactId>script-oak-fixture-reactor</artifactId>
+  <artifactId>script-oak-fixture-reactor_2.12</artifactId>
   <name>Script Oak Fixtures Reactor</name>
   <packaging>pom</packaging>
 
