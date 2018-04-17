@@ -91,6 +91,11 @@ object Items {
       }).toStream
     }
 
+    /** Size of the properties according the sum of the sizes of all its values */
+    def size: Long = {
+      ItemStates.propertySize(skipExternal = false)(state)
+    }
+
     override def toString: String =
       path + "[" + state.getType + "(" + state.count() +  ")] @ " + state
   }
