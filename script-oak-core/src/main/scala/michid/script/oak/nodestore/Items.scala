@@ -215,4 +215,12 @@ object Items {
     case v@Value(parent, _, _, _, _) => path(parent) + v.name
   }
 
+  /** Depth of an item in the hierarchy of its parents. */
+  def depth(item: Item): Int = item match {
+    case EMPTY => 0
+    case _@Node(parent, _, _) => depth(parent) + 1
+    case _@Property(parent, _) => depth(parent) + 1
+    case _@Value(parent, _, _, _, _) => depth(parent) + 1
+  }
+
 }
