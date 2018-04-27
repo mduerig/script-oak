@@ -12,12 +12,11 @@
     <relativePath>../../script-oak-parent/pom.xml</relativePath>
   </parent>
 
-  <artifactId>script-oak-1.10_2.12</artifactId>
-  <name>Script Oak 1.10 Fixture</name>
+  <artifactId>script-oak-1.9.0_2.12</artifactId>
+  <name>Script Oak 1.9.0 Fixture</name>
 
   <properties>
-    <!-- michid depend on released version of oak-segment-tar with tool api -->
-    <oak.fixture.version>1.10-SNAPSHOT</oak.fixture.version>
+    <oak.fixture.version>1.9.0</oak.fixture.version>
   </properties>
 
   <build>

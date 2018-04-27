@@ -30,13 +30,13 @@ package object fixtures {
   }
 
   val oakFixtures: Map[String, OakFixture] = Map(
-    oak_1_10.oakVersion -> oak_1_10,
+    oak_1_9_0.oakVersion -> oak_1_9_0,
   )
 
-  val latest: OakFixture = oak_1_10
+  val latest: OakFixture = oak_1_9_0
 
-  object oak_1_10 extends OakFixture {
-    val oakVersion = "oak-1.10"
+  object oak_1_9_0 extends OakFixture {
+    val oakVersion = "oak-1.9.0"
 
     override def toString: String = oakVersion
 

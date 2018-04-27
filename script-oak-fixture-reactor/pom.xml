@@ -15,6 +15,6 @@
 
   <modules>
     <module>script-oak-fixtures</module>
-    <module>script-oak-1.10</module>
+    <module>script-oak-1.9.0</module>
   </modules>
 </project>

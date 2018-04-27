@@ -16,7 +16,7 @@
   <name>Script Oak Core Test</name>
 
   <properties>
-    <oak.version>1.10-SNAPSHOT</oak.version>
+    <oak.version>1.9.0</oak.version>
   </properties>
 
   <build>
