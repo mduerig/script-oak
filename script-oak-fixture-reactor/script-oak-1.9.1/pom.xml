@@ -12,11 +12,11 @@
     <relativePath>../../script-oak-parent/pom.xml</relativePath>
   </parent>
 
-  <artifactId>script-oak-1.9.0_2.11</artifactId>
-  <name>Script Oak 1.9.0 Fixture</name>
+  <artifactId>script-oak-1.9.1_2.11</artifactId>
+  <name>Script Oak 1.9.1 Fixture</name>
 
   <properties>
-    <oak.fixture.version>1.9.0</oak.fixture.version>
+    <oak.fixture.version>1.9.1</oak.fixture.version>
   </properties>
 
   <build>

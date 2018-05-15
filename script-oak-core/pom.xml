@@ -8,7 +8,7 @@
   <parent>
     <groupId>michid</groupId>
     <artifactId>script-oak-parent_2.11</artifactId>
-    <version>1.4-SNAPSHOT</version>
+    <version>1.4</version>
     <relativePath>../script-oak-parent/pom.xml</relativePath>
   </parent>
 
