@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>michid</groupId>
+    <artifactId>script-oak-parent_2.12</artifactId>
+    <version>1.4-SNAPSHOT</version>
+    <relativePath>../../script-oak-parent/pom.xml</relativePath>
+  </parent>
+
+  <artifactId>script-oak-1.9.1_2.12</artifactId>
+  <name>Script Oak 1.9.1 Fixture</name>
+
+  <properties>
+    <oak.fixture.version>1.9.1</oak.fixture.version>
+  </properties>
+
+  <build>
+    <sourceDirectory>src/main/scala</sourceDirectory>
+    <plugins>
+      <plugin>
+        <groupId>net.alchim31.maven</groupId>
+        <artifactId>scala-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.jackrabbit</groupId>
+      <artifactId>oak-segment-tar</artifactId>
+      <version>${oak.fixture.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.jackrabbit</groupId>
+      <artifactId>oak-blob</artifactId>
+      <version>${oak.fixture.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.jackrabbit</groupId>
+      <artifactId>oak-blob-plugins</artifactId>
+      <version>${oak.fixture.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.lihaoyi</groupId>
+      <artifactId>ammonite-ops_2.12</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.scala-lang</groupId>
+      <artifactId>scala-library</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>michid</groupId>
+      <artifactId>script-oak-core_2.12</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.jackrabbit</groupId>
+      <artifactId>oak-tooling-api</artifactId>
+    </dependency>
+  </dependencies>
+</project>
