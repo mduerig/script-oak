@@ -15,10 +15,6 @@
   <artifactId>script-oak-core-test_2.12</artifactId>
   <name>Script Oak Core Test</name>
 
-  <properties>
-    <oak.version>1.9.0</oak.version>
-  </properties>
-
   <build>
     <sourceDirectory>src/main/scala</sourceDirectory>
     <plugins>
