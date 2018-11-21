@@ -4,7 +4,7 @@ import java.io.File.createTempFile
 import java.io.PrintWriter
 
 import ammonite.interp.InterpBridge
-import ammonite.ops.{Path, read, resource}
+import ammonite.ops._
 import ammonite.repl.ReplBridge
 import michid.script.oak.filestore.SegmentAnalyser
 import michid.script.oak.nodestore.Items
