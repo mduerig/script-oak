@@ -11,11 +11,11 @@ class RunScriptIT extends FunSuite with ScriptRunner {
 
     test(s"run script ($oakFixture)") {
       run(oakFixture) {
-        """println("foo")"""
+        """println("foo-42")"""
       } {
         case (out, err) =>
           assert(err.isEmpty)
-          assert(out.startsWith("foo"))
+          assert(out.contains("foo-42"))
       }
     }
 
@@ -25,7 +25,7 @@ class RunScriptIT extends FunSuite with ScriptRunner {
       } {
         case (out, err) =>
           assert(err.isEmpty)
-          assert(out.startsWith("42"))
+          assert(out.contains("42"))
       }
     }
 

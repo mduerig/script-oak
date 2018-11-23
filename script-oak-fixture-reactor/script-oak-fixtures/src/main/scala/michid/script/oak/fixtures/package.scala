@@ -48,6 +48,7 @@ package object fixtures {
       |@
       |import michid.script.oak._
       |import michid.script.oak.fixture._
+      |println("Welcome to Script Oak """ + scriptOakVersion + " / " + oakVersion + """")
     |""").stripMargin
   }
 
@@ -63,6 +64,7 @@ package object fixtures {
       |@
       |import michid.script.oak._
       |import michid.script.oak.fixture._
+      |println("Welcome to Script Oak """ + scriptOakVersion + " / " + oakVersion + """")
     |""").stripMargin
   }
 

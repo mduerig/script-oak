@@ -31,10 +31,8 @@ object Main {
       }
     }
 
-    ammonite.Main.main(Array(
-      "--predef-code", fixture.predef,
-      "--banner", s"Welcome to Script Oak $scriptOakVersion / ${fixture.oakVersion}") ++
-      ammArgs)
+    ammonite.Main.main(
+      Array("--predef-code", fixture.predef) ++ ammArgs)
   }
 
   def run(script: String, fixture: OakFixture): Unit =
