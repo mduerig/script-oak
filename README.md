@@ -1,12 +1,13 @@
 Support and scripts for working with [Jackrabbit Oak](http://jackrabbit.apache.org/oak/) in the
 [Ammonite Shell](https://lihaoyi.github.io/Ammonite/). 
 
-*NOTE*: Ammonite 0.8.5 is currently the most recent version supported. Ammonite's move to the
-Coursier library for resolving dependencies in 0.9 does currently not work properly with script-oak. 
-
 In a running Ammonite shell import the Script Oak library and its main API entry point:
 
-    import $ivy.`michid:script-oak:latest.integration`, michid.script.oak._
+    $ import $url.{`https://raw.githubusercontent.com/mduerig/script-oak/master/script-oak-fixture-reactor/script-oak-fixtures/fixtures.sc` => bootstrap}
+    Loaded script-oak 1.5
+    
+    $ bootstrap.loadOak
+    Welcome to Script Oak 1.5 / oak-1.9.11
     
 Alternatively start the pre-built shell, which already includes Script Oak and doesn't require
 above extra step:
@@ -20,9 +21,6 @@ Creating and accessing a JCR repository ([RepositoryDemo.sc](script-oak-core/src
  
     // Load the script
     val repoDemo = script("RepositoryDemo.sc")
-    
-    // Browse the script
-    browse(repoDemo)
     
     // Execute the script
     repoDemo.run
