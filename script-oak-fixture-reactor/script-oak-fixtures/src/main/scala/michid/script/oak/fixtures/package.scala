@@ -33,9 +33,10 @@ package object fixtures {
     oak_1_9_0.oakVersion -> oak_1_9_0,
     oak_1_9_1.oakVersion -> oak_1_9_1,
     oak_1_9_11.oakVersion -> oak_1_9_11,
+    oak_1_10_0.oakVersion -> oak_1_10_0,
   )
 
-  val latest: OakFixture = oak_1_9_11
+  val latest: OakFixture = oak_1_10_0
 
   object oak_1_9_0 extends OakFixture {
     val oakVersion = "oak-1.9.0"
@@ -71,6 +72,22 @@ package object fixtures {
 
   object oak_1_9_11 extends OakFixture {
     val oakVersion = "oak-1.9.11"
+
+    override def toString: String = oakVersion
+
+    // michid .m2 resolve should be there by default
+    val predef: String = ("""
+      |interp.repositories() ++= Seq(coursier.MavenRepository("file://" + java.lang.System.getProperties.get("user.home") + "/.m2/repository/"))
+      |interp.load.ivy(coursier.Dependency("michid"%%"script-""" + oakVersion + """", """" + scriptOakVersion + """"))
+      |@
+      |import michid.script.oak._
+      |import michid.script.oak.fixture._
+      |println("Welcome to Script Oak """ + scriptOakVersion + " / " + oakVersion + """")
+    |""").stripMargin
+  }
+
+  object oak_1_10_0 extends OakFixture {
+    val oakVersion = "oak-1.10.0"
 
     override def toString: String = oakVersion
 
