@@ -46,6 +46,11 @@
       <version>${oak.fixture.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.apache.jackrabbit</groupId>
+      <artifactId>oak-segment-azure</artifactId>
+      <version>${oak.fixture.version}</version>
+    </dependency>
+    <dependency>
       <groupId>com.lihaoyi</groupId>
       <artifactId>ammonite-ops_2.12</artifactId>
       <scope>provided</scope>

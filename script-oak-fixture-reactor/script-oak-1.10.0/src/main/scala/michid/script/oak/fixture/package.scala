@@ -5,9 +5,12 @@ import java.io.Closeable
 import ammonite.ops.{Path, pwd}
 import michid.script.oak.filestore.FileStoreAnalyser
 import org.apache.jackrabbit.oak.plugins.blob.datastore.{DataStoreBlobStore, OakFileDataStore}
+import org.apache.jackrabbit.oak.segment.azure.tool.ToolUtils.SegmentStoreType.AZURE
+import org.apache.jackrabbit.oak.segment.azure.tool.ToolUtils.newSegmentNodeStorePersistence
 import org.apache.jackrabbit.oak.segment.file.FileStoreBuilder
 import org.apache.jackrabbit.oak.segment.file.FileStoreBuilder.fileStoreBuilder
 import org.apache.jackrabbit.oak.segment.file.proc.Proc
+import org.apache.jackrabbit.oak.segment.spi.persistence.SegmentNodeStorePersistence
 import org.apache.jackrabbit.oak.spi.blob.BlobStore
 import org.apache.jackrabbit.oak.tooling.filestore.bindings.nodestate.NodeStateBackedSegmentStore
 
@@ -23,6 +26,13 @@ package object fixture {
   val plainFileStoreBuilder: Path => FileStoreBuilder =
     path => fileStoreBuilder(path.toNIO.toFile)
 
+  val azureStoreBuilder: String => FileStoreBuilder =
+    uri => fileStoreBuilder(pwd.toNIO.toFile)
+            .withCustomPersistence(createAzurePersistence(uri))
+
+  def createAzurePersistence(uri: String): SegmentNodeStorePersistence =
+    newSegmentNodeStorePersistence(AZURE, "az:" + uri)
+
   /** A customised file store builder, which configures a dummyBlobStore */
   val dummyBlobStoreBuilder: Path => FileStoreBuilder =
     plainFileStoreBuilder(_).withBlobStore(dummyBlobStore)
@@ -33,6 +43,29 @@ package object fixture {
     delegate.setPath(directory.toString)
     delegate.init(null)
     new DataStoreBlobStore(delegate)
+  }
+
+  def azureStoreAnalyser(
+    uri: String,
+    blobStore: BlobStore = dummyBlobStore,
+    readOnly: Boolean = true,
+    builder: String => FileStoreBuilder = azureStoreBuilder)
+  : FileStoreAnalyser = {
+    val fileStoreBuilder = builder(uri)
+    fileStoreBuilder.withBlobStore(blobStore)
+
+    val fileStore = if (readOnly)
+      fileStoreBuilder.buildReadOnly() else
+      fileStoreBuilder.build()
+
+    val store = NodeStateBackedSegmentStore.newSegmentStore(
+      Proc.of(fileStoreBuilder.buildProcBackend(fileStore)))
+    new FileStoreAnalyser(store) with Closeable {
+      override def close(): Unit = {
+        super.close()
+        fileStore.close()
+      }
+    }
   }
 
   /** Create a new file store analyser. If no data store exists at the given path the
