@@ -22,7 +22,7 @@ def loadFixtures(versions: List[String]): Unit = {
   }
 }
 
-val versions = List("1.6", "1.5", "1.4")
+val versions = List("1.7", "1.6", "1.5", "1.4")
 loadFixtures(versions)
 
 def loadOak(): Unit = {
